@@ -382,6 +382,8 @@
             const [isPlaying, setIsPlaying] = useState(false);
             const [progress, setProgress] = useState(0); // 0-100 %
             const [volume, setVolume] = useState(70);
+            const [autoplayBlocked, setAutoplayBlocked] = useState(false);
+            const [unsupportedFormatMsg, setUnsupportedFormatMsg] = useState(null);
 
             const audioRef = useRef(null);
             const scrollContainerRef = useRef(null);
@@ -443,7 +445,9 @@
                 if (soupOfTheDay) {
                     setCurrentSoupId(soupOfTheDay.id);
                     setCurrentTrackIndex(0);
-                    setIsPlaying(true); // автозапуск радио
+                    // Не принудительно автозапускать: многие браузеры блокируют autoplay.
+                    // Пользователь должен нажать Play вручную.
+                    setIsPlaying(false);
                 }
             }, [soups, currentSoupId, effectiveDayIndex]);
 
@@ -490,9 +494,45 @@
             useEffect(() => {
                 const audio = audioRef.current;
                 if (!audio || !currentSoup || !currentTrack) return;
-                audio.src = currentSoup.basePath + "/" + currentTrack.file;
+                setUnsupportedFormatMsg(null);
+                setAutoplayBlocked(false);
+
+                const src = currentSoup.basePath + "/" + currentTrack.file;
+                audio.src = src;
                 audio.load();
                 setProgress(0);
+
+                // Basic canPlayType check by file extension -> hint user if format unsupported
+                try {
+                    const ext = (currentTrack.file || "").split('.').pop().toLowerCase();
+                    const mimeMap = {
+                        mp3: 'audio/mpeg',
+                        m4a: 'audio/mp4',
+                        mp4: 'audio/mp4',
+                        webm: 'audio/webm',
+                        ogg: 'audio/ogg',
+                        wav: 'audio/wav',
+                        aac: 'audio/aac'
+                    };
+                    const mime = mimeMap[ext] || '';
+                    if (mime && audio.canPlayType) {
+                        const can = audio.canPlayType(mime);
+                        if (!can) {
+                            setUnsupportedFormatMsg(`Browser may not support audio type ${mime} (file: ${currentTrack.file}).`);
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Format check failed', e);
+                }
+
+                const onError = () => {
+                    setUnsupportedFormatMsg(`Failed to load ${currentTrack.file}. Check path and server MIME type.`);
+                };
+                audio.addEventListener('error', onError);
+
+                return () => {
+                    audio.removeEventListener('error', onError);
+                };
             }, [currentSoupId, currentTrackIndex, soups]);
 
             // Volume
@@ -545,6 +585,10 @@
                     if (p && p.catch) {
                         p.catch((err) => {
                             console.log("Playback error:", err);
+                            // Если браузер заблокировал autoplay — покажем сообщение и сбросим флаг play
+                            if (err && (err.name === 'NotAllowedError' || /play.*not allowed/i.test(err.message || ''))) {
+                                setAutoplayBlocked(true);
+                            }
                             setIsPlaying(false);
                         });
                     }
@@ -670,6 +714,19 @@
                     )}
                     {soupsError && (
                         <p className="text-xs text-red-400 mb-4 font-mono">{soupsError}</p>
+                    )}
+                    {unsupportedFormatMsg && (
+                        <p className="text-xs text-yellow-300 mb-4 font-mono">{unsupportedFormatMsg}</p>
+                    )}
+                    {autoplayBlocked && (
+                        <div className="text-xs text-amber-300 mb-4 font-mono">
+                            Autoplay was blocked by the browser — please press Play to start.
+                            If you opened this page with <code>file://</code>, fetch requests and media may fail.
+                            Run a local HTTP server in this folder, for example:
+                            <div className="mt-1 font-mono text-[11px]">
+                                <code>python -m http.server 8000</code>
+                            </div>
+                        </div>
                     )}
 
                     {/* Полка с кассетами */}
