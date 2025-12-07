@@ -4,7 +4,7 @@
       "id": "sup_dnya_1",
       "title": "SUP DNYA 1",
       "tagline": "Суп дня #1 (воскресенье)",
-      "basePath": "soups/sup_dnya_1",
+      "basePath": "soups/sup dnya1",
       "coverColor": "bg-indigo-400",
       "tapeType": "TYPE I",
       "type": "day",
@@ -31,3 +31,4 @@
     }
   ]
 }
+
