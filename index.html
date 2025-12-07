@@ -391,13 +391,12 @@
                 return { dayIndex: d.getDay() };
             });
 
-            // === DEBUG: выбор дня недели (для теста) ===
-            // Если debugDayIndex == null, используется настоящий день недели.
+            const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+            // DEBUG: manual day-of-week override for testing
             const [debugDayIndex, setDebugDayIndex] = useState(null);
             const effectiveDayIndex = debugDayIndex ?? todayInfo.dayIndex;
-            // === /DEBUG ===
 
-            const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
             const currentSoup = soups.find((s) => s.id === currentSoupId) || null;
             const currentTrack =
@@ -433,25 +432,22 @@
                 loadSoupsIndex();
             }, []);
 
-            // Автовыбор "супа дня" по effectiveDayIndex (с учётом дебага)
+            // По умолчанию включаем "суп дня" по локальному дню недели
             useEffect(() => {
-                if (soups.length === 0) return;
-
+                if (soups.length === 0 || currentSoupId) return;
                 const candidates = soups.filter(
                     (s) => s.type === "day" && typeof s.dayOfWeek === "number"
                 );
-                const soupOfTheDay =
+                let soupOfTheDay =
                     candidates.find((s) => s.dayOfWeek === effectiveDayIndex) || soups[0];
+                if (soupOfTheDay) {
+                    setCurrentSoupId(soupOfTheDay.id);
+                    setCurrentTrackIndex(0);
+                    setIsPlaying(false); // отключён автозапуск — требуется действие пользователя для play()
+                }
+            }, [soups, currentSoupId, effectiveDayIndex]);
 
-                if (!soupOfTheDay) return;
-                if (currentSoupId === soupOfTheDay.id) return;
-
-                setCurrentSoupId(soupOfTheDay.id);
-                setCurrentTrackIndex(0);
-                setIsPlaying(true); // автозапуск радио
-            }, [soups, effectiveDayIndex]);
-
-            // Когда выбран суп, подгружаем его playlist.json (если ещё не загружен)
+            // Когда выбран суп, подгружаем его playlist.json
             useEffect(() => {
                 const soup = soups.find((s) => s.id === currentSoupId);
                 if (!soup || soup.tracksLoaded) return;
@@ -506,39 +502,51 @@
                 }
             }, [volume]);
 
-            // Timeupdate + ended
-            useEffect(() => {
-                const audio = audioRef.current;
-                if (!audio) return;
+// Timeupdate + ended + error
+useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
 
-                const soup = soups.find((s) => s.id === currentSoupId);
+    const soup = soups.find((s) => s.id === currentSoupId);
 
-                const handleTimeUpdate = () => {
-                    if (!audio.duration) {
-                        setProgress(0);
-                        return;
-                    }
-                    setProgress((audio.currentTime / audio.duration) * 100);
-                };
+    const handleTimeUpdate = () => {
+        if (!audio.duration) {
+            setProgress(0);
+            return;
+        }
+        setProgress((audio.currentTime / audio.duration) * 100);
+    };
 
-                const handleEnded = () => {
-                    setProgress(0);
-                    if (!soup || !soup.tracks || soup.tracks.length === 0) return;
-                    setCurrentTrackIndex((prev) => {
-                        const trackCount = soup.tracks.length;
-                        if (trackCount === 0) return prev;
-                        return prev + 1 < trackCount ? prev + 1 : 0; // loop по супу
-                    });
-                };
+    const goToNextTrack = () => {
+        setProgress(0);
+        if (!soup || !soup.tracks || soup.tracks.length === 0) return;
+        setCurrentTrackIndex((prev) => {
+            const trackCount = soup.tracks.length;
+            if (trackCount === 0) return prev;
+            return prev + 1 < trackCount ? prev + 1 : 0; // loop по супу
+        });
+    };
 
-                audio.addEventListener("timeupdate", handleTimeUpdate);
-                audio.addEventListener("ended", handleEnded);
+    const handleEnded = () => {
+        goToNextTrack();
+    };
 
-                return () => {
-                    audio.removeEventListener("timeupdate", handleTimeUpdate);
-                    audio.removeEventListener("ended", handleEnded);
-                };
-            }, [currentSoupId, soups]);
+    const handleError = (e) => {
+        console.warn("Audio error on", audio.currentSrc || audio.src, e?.message || e);
+        goToNextTrack();
+    };
+
+    audio.addEventListener("timeupdate", handleTimeUpdate);
+    audio.addEventListener("ended", handleEnded);
+    audio.addEventListener("error", handleError);
+
+    return () => {
+        audio.removeEventListener("timeupdate", handleTimeUpdate);
+        audio.removeEventListener("ended", handleEnded);
+        audio.removeEventListener("error", handleError);
+    };
+}, [currentSoupId, soups]);
+
 
             // Play / pause
             useEffect(() => {
@@ -635,7 +643,7 @@
                         <Disc className="text-orange-600 drop-shadow-md" size={28} />
                     </h2>
 
-                    {/* === DEBUG UI: выбор дня недели (удаляется одним куском) === */}
+                    {/* DEBUG day override UI - delete this block for release */}
                     <div className="mb-2 flex flex-col sm:flex-row items-center justify-center gap-2 text-[11px] text-neutral-400 font-mono">
                         <span>Debug day override:</span>
                         <select
@@ -657,7 +665,6 @@
                             Reset to real day
                         </button>
                     </div>
-                    {/* === /DEBUG UI === */}
 
                     <p className="text-xs md:text-sm text-neutral-400 mb-6 text-center font-mono">
                         Today: {dayNames[effectiveDayIndex]}

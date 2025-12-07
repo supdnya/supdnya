@@ -1,0 +1,336 @@
+{
+  "title": "Суп дня",
+  "tagline": "Первый суп дня",
+  "tracks": [
+    {
+      "file": "Суп дня.mp3",
+      "title": "Суп дня",
+      "artist": "Oxxxymiron"
+    },
+    {
+      "file": "Life is a Highway.mp3",
+      "title": "Life is a Highway",
+      "artist": "Rascal Flatts"
+    },
+    {
+      "file": "Izzy’s Got the Frizzies.mp3",
+      "title": "Izzy’s Got the Frizzies",
+      "artist": "Carmen Carter"
+    },
+    {
+      "file": "Psycho.mp3",
+      "title": "Psycho",
+      "artist": "Maisie Peters"
+    },
+    {
+      "file": "i h8 that i still feel bad for u.mp3",
+      "title": "i h8 that i still feel bad for u",
+      "artist": "Claire Rosinkranz"
+    },
+    {
+      "file": "jealousy, jealousy.mp3",
+      "title": "jealousy, jealousy",
+      "artist": "Olivia Rodrigo"
+    },
+    {
+      "file": "My Phone Died.mp3",
+      "title": "My Phone Died",
+      "artist": "Cal Scruby"
+    },
+    {
+      "file": "Money Buy Drugs (Interlude).mp3",
+      "title": "Money Buy Drugs (Interlude)",
+      "artist": "Cal Scruby"
+    },
+    {
+      "file": "Buddy.mp3",
+      "title": "Buddy",
+      "artist": "Connor Price, Hoodie Allen"
+    },
+    {
+      "file": "bad idea!.mp3",
+      "title": "bad idea!",
+      "artist": "girl in red"
+    },
+    {
+      "file": "bad idea right?.mp3",
+      "title": "bad idea right?",
+      "artist": "Olivia Rodrigo"
+    },
+    {
+      "file": "Not Another Rockstar.mp3",
+      "title": "Not Another Rockstar",
+      "artist": "Maisie Peters"
+    },
+    {
+      "file": "100 Miles and Running (ft. Wale & John Lindahl).mp3",
+      "title": "100 Miles and Running (ft. Wale & John Lindahl)",
+      "artist": "Logic, Wale, John Lindahl"
+    },
+    {
+      "file": "The Passenger.mp3",
+      "title": "The Passenger",
+      "artist": "Iggy Pop"
+    },
+    {
+      "file": "Tom's Diner.mp3",
+      "title": "Tom's Diner",
+      "artist": "AnnenMayKantereit, Giant Rooks"
+    },
+    {
+      "file": "Tourner Dans Le Vide.mp3",
+      "title": "Tourner Dans Le Vide",
+      "artist": "Indila"
+    },
+    {
+      "file": "Je veux.mp3",
+      "title": "Je veux",
+      "artist": "Zaz"
+    },
+    {
+      "file": "POS.mp3",
+      "title": "POS",
+      "artist": "Sueco"
+    },
+    {
+      "file": "Boom bap rap cold-blooded freestyle.mp3",
+      "title": "Boom bap rap cold-blooded freestyle",
+      "artist": "LIL THE NEEL"
+    },
+    {
+      "file": "Kamikaze.mp3",
+      "title": "Kamikaze",
+      "artist": "Eminem"
+    },
+    {
+      "file": "Из окна.mp3",
+      "title": "Из окна",
+      "artist": "Noize MC"
+    },
+    {
+      "file": "NO NAME.mp3",
+      "title": "NO NAME",
+      "artist": "NF"
+    },
+    {
+      "file": "Me and the Birds.mp3",
+      "title": "Me and the Birds",
+      "artist": "Duster"
+    },
+    {
+      "file": "Nightcall.mp3",
+      "title": "Nightcall",
+      "artist": "Kavinsky"
+    },
+    {
+      "file": "Amour plastique.mp3",
+      "title": "Amour plastique",
+      "artist": "Videoclub, Adèle Castillon, Mattyeux"
+    },
+    {
+      "file": "Bored.mp3",
+      "title": "Bored",
+      "artist": "Tessa Violet"
+    },
+    {
+      "file": "NEVER MET! (feat. Glitch Gum).mp3",
+      "title": "NEVER MET! (feat. Glitch Gum)",
+      "artist": "CMTEN, Glitch Gum"
+    },
+    {
+      "file": "Broken Boy.mp3",
+      "title": "Broken Boy",
+      "artist": "Cage The Elephant"
+    },
+    {
+      "file": "Daisy.mp3",
+      "title": "Daisy",
+      "artist": "Ashnikko"
+    },
+    {
+      "file": "Kickstart My Heart.mp3",
+      "title": "Kickstart My Heart",
+      "artist": "Mötley Crüe"
+    },
+    {
+      "file": "Me, Myself & I.mp3",
+      "title": "Me, Myself & I",
+      "artist": "Oliver Tree"
+    },
+    {
+      "file": "Chug Jug With You (Number One Victory Royale).mp3",
+      "title": "Chug Jug With You (Number One Victory Royale)",
+      "artist": "LeviathanJPTV"
+    },
+    {
+      "file": "Song 2.mp3",
+      "title": "Song 2",
+      "artist": "Blur"
+    },
+    {
+      "file": "Diamond.mp3",
+      "title": "Diamond",
+      "artist": "Klint"
+    },
+    {
+      "file": "she knows it.mp3",
+      "title": "she knows it",
+      "artist": "Maggie Lindemann"
+    },
+    {
+      "file": "Lalala.mp3",
+      "title": "Lalala",
+      "artist": "Y2K, bbno$"
+    },
+    {
+      "file": "MoneyOnMyMind (feat. Absofacto).mp3",
+      "title": "MoneyOnMyMind (feat. Absofacto)",
+      "artist": "UPSAHL, Absofacto"
+    },
+    {
+      "file": "ART GANG MONEY (feat. REDDY).mp3",
+      "title": "ART GANG MONEY (feat. REDDY)",
+      "artist": "Swervy, REDDY"
+    },
+    {
+      "file": "And They All Fall Down.mp3",
+      "title": "And They All Fall Down",
+      "artist": "Saint Agnes"
+    },
+    {
+      "file": "REVIVED.mp3",
+      "title": "REVIVED",
+      "artist": "Derivakat"
+    },
+    {
+      "file": "Rocket Fuel.mp3",
+      "title": "Rocket Fuel",
+      "artist": "DJ Shadow"
+    },
+    {
+      "file": "bad idea right? (2).mp3",
+      "title": "bad idea right?",
+      "artist": "Olivia Rodrigo"
+    },
+    {
+      "file": "Bubblegum Bitch.mp3",
+      "title": "Bubblegum Bitch",
+      "artist": "MARINA"
+    },
+    {
+      "file": "Late to the Party.mp3",
+      "title": "Late to the Party",
+      "artist": "Emei"
+    },
+    {
+      "file": "Мэджик пипл.mp3",
+      "title": "Мэджик пипл",
+      "artist": "ATL"
+    },
+    {
+      "file": "Brainwashed.mp3",
+      "title": "Brainwashed",
+      "artist": "Between Thorns"
+    },
+    {
+      "file": "Big Brat.mp3",
+      "title": "Big Brat",
+      "artist": "Phantom Planet"
+    },
+    {
+      "file": "LONERS ANTHEM.mp3",
+      "title": "LONERS ANTHEM",
+      "artist": "WHO SHOT SCOTT"
+    },
+    {
+      "file": "Tom Tom.mp3",
+      "title": "Tom Tom",
+      "artist": "Holy Fuck"
+    },
+    {
+      "file": "Тренировочный День.mp3",
+      "title": "Тренировочный День",
+      "artist": "Markul, Куок"
+    },
+    {
+      "file": "Горсвет.mp3",
+      "title": "Горсвет",
+      "artist": "Oxxxymiron"
+    },
+    {
+      "file": "Stick Up.mp3",
+      "title": "Stick Up",
+      "artist": "grandson"
+    },
+    {
+      "file": "Катацумури.mp3",
+      "title": "Катацумури",
+      "artist": "Noize MC, Linda"
+    },
+    {
+      "file": "ISIS TYPE BEAT.mp3",
+      "title": "ISIS TYPE BEAT",
+      "artist": "Lil Darkie"
+    },
+    {
+      "file": "TOXIC.mp3",
+      "title": "TOXIC",
+      "artist": "YOUNGX777"
+    },
+    {
+      "file": "808 PROBLEM.mp3",
+      "title": "808 PROBLEM",
+      "artist": "SIDODGI DUBOSHIT"
+    },
+    {
+      "file": "brutal.mp3",
+      "title": "brutal",
+      "artist": "Olivia Rodrigo"
+    },
+    {
+      "file": "good 4 u.mp3",
+      "title": "good 4 u",
+      "artist": "Olivia Rodrigo"
+    },
+    {
+      "file": "High Enough.mp3",
+      "title": "High Enough",
+      "artist": "K.Flay"
+    },
+    {
+      "file": "Revolver.mp3",
+      "title": "Revolver",
+      "artist": "bülow"
+    },
+    {
+      "file": "Lotta True Crime.mp3",
+      "title": "Lotta True Crime",
+      "artist": "Penelope Scott"
+    },
+    {
+      "file": "Bugbear.mp3",
+      "title": "Bugbear",
+      "artist": "chloe moriondo"
+    },
+    {
+      "file": "Flower.mp3",
+      "title": "Flower",
+      "artist": "Moby"
+    },
+    {
+      "file": "None Of Your Business.mp3",
+      "title": "None Of Your Business",
+      "artist": "Salt-N-Pepa"
+    },
+    {
+      "file": "Everyday Normal Guy 2.mp3",
+      "title": "Everyday Normal Guy 2",
+      "artist": "Jon Lajoie"
+    },
+    {
+      "file": "Dumb Ways to Die.mp3",
+      "title": "Dumb Ways to Die",
+      "artist": "Tangerine Kitty"
+    }
+  ]
+}

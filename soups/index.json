@@ -1,0 +1,33 @@
+{
+  "soups": [
+    {
+      "id": "sup_dnya_1",
+      "title": "SUP DNYA 1",
+      "tagline": "Суп дня #1 (воскресенье)",
+      "basePath": "soups/sup_dnya_1",
+      "coverColor": "bg-indigo-400",
+      "tapeType": "TYPE I",
+      "type": "day",
+      "dayOfWeek": 0
+    },
+    {
+      "id": "sup_dnya_2",
+      "title": "SUP DNYA 2",
+      "tagline": "Суп дня #2 (понедельник)",
+      "basePath": "soups/sup_dnya_2",
+      "coverColor": "bg-fuchsia-500",
+      "tapeType": "TYPE II",
+      "type": "day",
+      "dayOfWeek": 1
+    },
+    {
+      "id": "sup_snya_3",
+      "title": "SUP SNYA 3",
+      "tagline": "Кассета с супом #3",
+      "basePath": "soups/sup_snya_3",
+      "coverColor": "bg-purple-500",
+      "tapeType": "TYPE II",
+      "type": "cassette"
+    }
+  ]
+}
