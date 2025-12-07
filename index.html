@@ -1,1318 +1,1367 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Суп дня</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- React и ReactDOM -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-    
-    <!-- Babel для JSX -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
+  <title>Суп дня</title>
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;600&family=Caveat:wght@700&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at top, #2b3038 0, #14161b 45%, #050609 100%);
-        }
-        .font-mono { font-family: 'Space Mono', monospace; }
-        .font-handwriting { font-family: 'Caveat', cursive; }
-        
-        .animate-spin-slow { animation: spin 3s linear infinite; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+  <!-- React и ReactDOM -->
+  <script
+    src="https://unpkg.com/react@18/umd/react.development.js"
+    crossorigin
+  ></script>
+  <script
+    src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+    crossorigin
+  ></script>
 
-        .brushed-metal {
-          background-color: #dadde2;
-          background-image:
-            linear-gradient(135deg, rgba(255,255,255,0.9) 0, rgba(255,255,255,0.4) 30%, rgba(180,185,195,0.7) 100%),
-            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6' viewBox='0 0 6 6'%3E%3Cpath fill='%23ffffff' fill-opacity='0.25' d='M0 0h6v1H0z'/%3E%3C/svg%3E");
-          background-blend-mode: soft-light, normal;
-        }
-        
-        .wood-shelf {
-            background-color: #6d4c41;
-            background-image:
-              linear-gradient(to bottom, #a1734e, #5b3a27);
-        }
+  <!-- Babel для JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;600&family=Caveat:wght@700&display=swap"
+    rel="stylesheet"
+  />
 
-        /* Толчок корпуса вперёд/назад при перемотке */
-        @keyframes jogForward {
-            0%   { transform: translateX(0) translateY(0) rotate(0); }
-            30%  { transform: translateX(3px) translateY(1px) rotate(0.25deg); }
-            100% { transform: translateX(0) translateY(0) rotate(0); }
-        }
-        @keyframes jogBack {
-            0%   { transform: translateX(0) translateY(0) rotate(0); }
-            30%  { transform: translateX(-3px) translateY(1px) rotate(-0.25deg); }
-            100% { transform: translateX(0) translateY(0) rotate(0); }
-        }
-        .jog-forward {
-            animation: jogForward 0.22s ease-out;
-        }
-        .jog-back {
-            animation: jogBack 0.22s ease-out;
-        }
+  <style>
+    :root {
+      font-size: 16px;
+    }
 
-        /* Стеклянный дисплей — впуклый */
-        .glass-panel {
-            background:
-              radial-gradient(circle at top left, rgba(255,255,255,0.2) 0, transparent 50%),
-              radial-gradient(circle at bottom, rgba(0,0,0,0.9) 0, rgba(0,0,0,1) 60%);
-            box-shadow:
-              inset 0 6px 14px rgba(255,255,255,0.35),
-              inset 0 -14px 28px rgba(0,0,0,0.95),
-              inset 0 0 0 1px rgba(255,255,255,0.08);
-        }
+    body {
+      font-family: "Inter", sans-serif;
+      background: radial-gradient(circle at top, #2b3038 0, #14161b 45%, #050609 100%);
+    }
 
-        .glass-highlight {
-            background: linear-gradient(to bottom, rgba(255,255,255,0.25), transparent 55%);
-        }
+    .font-mono {
+      font-family: "Space Mono", monospace;
+    }
 
-        /* Маленький подсвеченный label Apple-стиля */
-        .pill-label {
-            background: linear-gradient(to bottom, rgba(255,255,255,0.9), rgba(200,200,200,0.9));
-            box-shadow:
-              0 1px 0 rgba(255,255,255,0.9),
-              0 3px 7px rgba(0,0,0,0.45);
-        }
+    .font-handwriting {
+      font-family: "Caveat", cursive;
+    }
 
-        /* Верхние кнопки как у старых хи-фи */
-        .top-key {
-            background: linear-gradient(to bottom, #f9fafb, #c5ccd4);
-            box-shadow:
-              0 3px 0 rgba(123,128,138,0.9),
-              0 6px 12px rgba(0,0,0,0.45),
-              inset 0 1px 0 rgba(255,255,255,0.85);
-        }
-        .top-key:active {
-            box-shadow:
-              0 1px 0 rgba(123,128,138,0.9),
-              0 3px 8px rgba(0,0,0,0.45),
-              inset 0 1px 0 rgba(255,255,255,0.6);
-        }
+    .animate-spin-slow {
+      animation: spin 3s linear infinite;
+    }
 
-        /* Стеклянный «тюнер» — тоже слегка впуклый */
-        .tuner-glass {
-            background:
-              radial-gradient(circle at top, rgba(255,255,255,0.35) 0, transparent 60%), 
-              linear-gradient(to bottom, rgba(50,55,70,0.95), rgba(12,12,18,0.98));
-            box-shadow:
-              inset 0 5px 10px rgba(255,255,255,0.35),
-              inset 0 -8px 20px rgba(0,0,0,0.95),
-              inset 0 0 0 1px rgba(255,255,255,0.05);
-        }
+    @keyframes spin {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
 
-        /* Хромовая окантовка */
-        .chrome-bezel {
-            background: linear-gradient(135deg, #f5f6f8, #afb4c0 40%, #dfe2e9 60%, #a1a6b2 100%);
-            box-shadow:
-              inset 0 1px 0 rgba(255,255,255,0.9),
-              inset 0 -1px 0 rgba(120,120,128,0.9),
-              0 12px 30px rgba(0,0,0,0.85);
-        }
+    .wood-shelf {
+      background-image: linear-gradient(to bottom, #593b26, #321e12);
+    }
 
-        .inner-aluminum {
-            background: radial-gradient(circle at top, #f7f8fb 0, #b7bcc8 40%, #9aa0ae 100%);
-        }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
 
-        .no-select {
-            user-select: none;
-            -webkit-user-select: none;
-            -ms-user-select: none;
-        }
-    </style>
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Толчок корпуса вперёд/назад при перемотке */
+    @keyframes jogForward {
+      0% {
+        transform: translateX(0) translateY(0) rotate(0);
+      }
+      30% {
+        transform: translateX(0.2rem) translateY(0.05rem) rotate(0.15deg);
+      }
+      100% {
+        transform: translateX(0) translateY(0) rotate(0);
+      }
+    }
+
+    @keyframes jogBack {
+      0% {
+        transform: translateX(0) translateY(0) rotate(0);
+      }
+      30% {
+        transform: translateX(-0.2rem) translateY(0.05rem) rotate(-0.15deg);
+      }
+      100% {
+        transform: translateX(0) translateY(0) rotate(0);
+      }
+    }
+
+    .jog-forward {
+      animation: jogForward 0.22s ease-out;
+    }
+
+    .jog-back {
+      animation: jogBack 0.22s ease-out;
+    }
+
+    /* Впуклый стеклянный дисплей */
+    .glass-panel {
+      border-radius: 1.4rem;
+      background: radial-gradient(circle at top, #1f2933 0, #020617 60%);
+      box-shadow:
+        inset 0 0.05rem 0.3rem rgba(255, 255, 255, 0.4),
+        inset 0 -0.15rem 0.4rem rgba(0, 0, 0, 0.9),
+        0 0.6rem 1.7rem rgba(0, 0, 0, 0.85);
+    }
+
+    .glass-highlight {
+      background: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.5),
+        transparent 55%
+      );
+    }
+
+    /* Выпуклые круглые кнопки */
+    .chrome-bezel {
+      background: linear-gradient(
+        135deg,
+        #f1f5f9,
+        #cbd5e1 40%,
+        #e5e7eb 60%,
+        #9ca3af 100%
+      );
+      box-shadow:
+        inset 0 0.05rem 0.05rem rgba(255, 255, 255, 0.9),
+        inset 0 -0.05rem 0.05rem rgba(120, 120, 130, 0.9),
+        0 1.2rem 2.5rem rgba(0, 0, 0, 0.9);
+    }
+
+    .brushed-metal-inner {
+      background: radial-gradient(circle at top, #f9fafb 0, #cbd5e1 40%, #9ca3af 100%);
+      box-shadow:
+        inset 0 0.4rem 0.95rem rgba(255, 255, 255, 0.7),
+        inset 0 -0.7rem 1.2rem rgba(107, 114, 128, 0.95);
+    }
+
+    .top-key {
+      background: linear-gradient(to bottom, #f9fafb, #c5ccd4);
+      box-shadow:
+        0 0.2rem 0 rgba(51, 65, 85, 0.9),
+        0 0.45rem 0.8rem rgba(0, 0, 0, 0.5),
+        inset 0 0.05rem 0 rgba(255, 255, 255, 0.9);
+    }
+
+    .top-key:active {
+      box-shadow:
+        0 0.1rem 0 rgba(51, 65, 85, 0.9),
+        0 0.25rem 0.7rem rgba(0, 0, 0, 0.45),
+        inset 0 0.05rem 0 rgba(255, 255, 255, 0.75);
+    }
+
+    /* Впуклый динамик */
+    .speaker-shell {
+      box-shadow:
+        inset 0 0.7rem 1.2rem rgba(255, 255, 255, 0.55),
+        inset 0 -0.8rem 1.4rem rgba(31, 41, 55, 0.95),
+        0 0.9rem 1.8rem rgba(0, 0, 0, 0.8);
+      background: radial-gradient(circle at top, #f9fafb 0, #cbd5e1 45%, #6b7280 90%);
+    }
+
+    .speaker-inset {
+      box-shadow:
+        inset 0 0.35rem 0.7rem rgba(0, 0, 0, 0.9),
+        inset 0 -0.4rem 0.7rem rgba(0, 0, 0, 0.85);
+      background: radial-gradient(circle at center, #020617 0, #020617 60%, #020617 100%);
+    }
+
+    .no-select {
+      user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+    }
+  </style>
 </head>
-<body class="text-neutral-200 min-h-screen flex flex-col items-center p-8">
-    <div id="root" class="w-full flex flex-col items-center"></div>
+<body class="text-neutral-200 min-h-screen flex flex-col items-center p-6 sm:p-8">
+  <div id="root" class="w-full flex flex-col items-center"></div>
 
-    <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
 
-        // --- Иконки (SVG) ---
-        const Icon = ({ path, size = 24, className = "", fill = "none" }) => (
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width={size}
-                height={size}
-                viewBox="0 0 24 24"
-                fill={fill}
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className={className}
-            >
-                {path}
-            </svg>
-        );
+    const Icon = ({ path, size = 24, className = "", fill = "none" }) => (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill={fill}
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={className}
+      >
+        {path}
+      </svg>
+    );
 
-        const Play = (p) => <Icon {...p} path={<polygon points="5 3 19 12 5 21 5 3"></polygon>} />;
-        const Pause = (p) => (
-            <Icon
-                {...p}
-                path={
-                    <>
-                        <rect x="6" y="4" width="4" height="16"></rect>
-                        <rect x="14" y="4" width="4" height="16"></rect>
-                    </>
-                }
-            />
-        );
-        const SkipForward = (p) => (
-            <Icon
-                {...p}
-                path={
-                    <>
-                        <polygon points="5 4 15 12 5 20 5 4"></polygon>
-                        <line x1="19" y1="5" x2="19" y2="19"></line>
-                    </>
-                }
-            />
-        );
-        const SkipBack = (p) => (
-            <Icon
-                {...p}
-                path={
-                    <>
-                        <polygon points="19 20 9 12 19 4 19 20"></polygon>
-                        <line x1="5" y1="19" x2="5" y2="5"></line>
-                    </>
-                }
-            />
-        );
-        const Volume2 = (p) => (
-            <Icon
-                {...p}
-                path={
-                    <>
-                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                    </>
-                }
-            />
-        );
-        const BatteryMedium = (p) => (
-            <Icon
-                {...p}
-                path={
-                    <>
-                        <rect x="1" y="6" width="18" height="12" rx="2" ry="2"></rect>
-                        <line x1="23" y1="13" x2="23" y2="11"></line>
-                        <line x1="5" y1="10" x2="5" y2="14"></line>
-                        <line x1="9" y1="10" x2="9" y2="14"></line>
-                        <line x1="13" y1="10" x2="13" y2="14"></line>
-                    </>
-                }
-            />
-        );
-        const Disc = (p) => (
-            <Icon
-                {...p}
-                path={
-                    <>
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <circle cx="12" cy="12" r="3"></circle>
-                    </>
-                }
-            />
-        );
-        const Activity = (p) => <Icon {...p} path={<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>} />;
-        const RadioIcon = (p) => (
-            <Icon
-                {...p}
-                path={
-                    <>
-                        <circle cx="12" cy="12" r="2"></circle>
-                        <path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"></path>
-                    </>
-                }
-            />
-        );
-        const Music2 = (p) => (
-            <Icon
-                {...p}
-                path={
-                    <>
-                        <circle cx="8" cy="18" r="4"></circle>
-                        <path d="M12 18V2l7 4"></path>
-                    </>
-                }
-            />
-        );
-        const ChevronLeft = (p) => <Icon {...p} path={<polyline points="15 18 9 12 15 6"></polyline>} />;
-        const ChevronRight = (p) => <Icon {...p} path={<polyline points="9 18 15 12 9 6"></polyline>} />;
+    const Play = (p) => (
+      <Icon
+        {...p}
+        path={<polygon points="5 3 19 12 5 21 5 3"></polygon>}
+      />
+    );
+    const Pause = (p) => (
+      <Icon
+        {...p}
+        path={
+          <>
+            <rect x="6" y="4" width="4" height="16"></rect>
+            <rect x="14" y="4" width="4" height="16"></rect>
+          </>
+        }
+      />
+    );
+    const SkipForward = (p) => (
+      <Icon
+        {...p}
+        path={
+          <>
+            <polygon points="5 4 15 12 5 20 5 4"></polygon>
+            <line x1="19" y1="5" x2="19" y2="19"></line>
+          </>
+        }
+      />
+    );
+    const SkipBack = (p) => (
+      <Icon
+        {...p}
+        path={
+          <>
+            <polygon points="19 20 9 12 19 4 19 20"></polygon>
+            <line x1="5" y1="19" x2="5" y2="5"></line>
+          </>
+        }
+      />
+    );
+    const Volume2 = (p) => (
+      <Icon
+        {...p}
+        path={
+          <>
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </>
+        }
+      />
+    );
+    const BatteryMedium = (p) => (
+      <Icon
+        {...p}
+        path={
+          <>
+            <rect x="1" y="6" width="18" height="12" rx="2" ry="2"></rect>
+            <line x1="23" y1="13" x2="23" y2="11"></line>
+            <line x1="5" y1="10" x2="5" y2="14"></line>
+            <line x1="9" y1="10" x2="9" y2="14"></line>
+            <line x1="13" y1="10" x2="13" y2="14"></line>
+          </>
+        }
+      />
+    );
+    const Disc = (p) => (
+      <Icon
+        {...p}
+        path={
+          <>
+            <circle cx="12" cy="12" r="10"></circle>
+            <circle cx="12" cy="12" r="3"></circle>
+          </>
+        }
+      />
+    );
+    const Activity = (p) => (
+      <Icon
+        {...p}
+        path={
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+        }
+      />
+    );
+    const RadioIcon = (p) => (
+      <Icon
+        {...p}
+        path={
+          <>
+            <circle cx="12" cy="12" r="2"></circle>
+            <path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"></path>
+          </>
+        }
+      />
+    );
+    const Music2 = (p) => (
+      <Icon
+        {...p}
+        path={
+          <>
+            <circle cx="8" cy="18" r="4"></circle>
+            <path d="M12 18V2l7 4"></path>
+          </>
+        }
+      />
+    );
+    const ChevronLeft = (p) => (
+      <Icon
+        {...p}
+        path={<polyline points="15 18 9 12 15 6"></polyline>}
+      />
+    );
+    const ChevronRight = (p) => (
+      <Icon
+        {...p}
+        path={<polyline points="9 18 15 12 9 6"></polyline>}
+      />
+    );
 
-        // --- Визуальные компоненты ---
+    const Cassette = ({ soup, isActive, isSoupOfTheDay, onClick }) => {
+      const coverColor = soup.coverColor || "bg-neutral-900";
+      const labelTitle = soup.playlistTitle || soup.title || soup.id;
+      const labelTagline =
+        soup.playlistTagline ||
+        soup.tagline ||
+        (soup.type === "day" ? "SOUP OF THE DAY" : "CASSETTE SOUP");
+      const tapeType = soup.tapeType || "TYPE II";
 
-        const Cassette = ({ soup, isActive, isSoupOfTheDay, onClick }) => {
-            // кассета всегда чёрная по корпусу
-            const coverColor = "bg-neutral-900"; // игнорируем soup.coverColor
-            const labelTitle = soup.playlistTitle || soup.title || soup.id;
-            const labelTagline =
-                soup.playlistTagline ||
-                soup.tagline ||
-                (soup.type === "day" ? "SOUP OF THE DAY" : "CASSETTE SOUP");
-            const tapeType = soup.tapeType || "TYPE II";
+      return (
+        <div
+          onClick={() => onClick(soup)}
+          className={`
+            relative w-64 h-40 sm:w-60 sm:h-36 flex-shrink-0 rounded-xl border-[0.2rem] cursor-pointer transition-all duration-300 transform-gpu group
+            ${
+              isActive
+                ? "border-orange-400/90 scale-[1.04] shadow-[0_1.2rem_2.2rem_rgba(249,115,22,0.45)] z-10"
+                : "border-neutral-700/90 hover:scale-105 hover:shadow-[0_0.9rem_1.6rem_rgba(0,0,0,0.65)] hover:border-neutral-200/80"
+            }
+            bg-gradient-to-br from-neutral-900 via-black to-neutral-800 select-none overflow-hidden
+          `}
+          style={{
+            backgroundImage:
+              "linear-gradient(135deg, rgba(255,255,255,0.08), transparent 40%), radial-gradient(circle at top left, rgba(255,255,255,0.2), transparent 60%)",
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-black/40 pointer-events-none mix-blend-screen" />
+          <div className="absolute inset-0 shadow-[inset_0_0.15rem_0.4rem_rgba(255,255,255,0.18),inset_0_-0.2rem_0.5rem_rgba(0,0,0,0.7)] rounded-xl pointer-events-none" />
 
-            return (
+          {/* Screws */}
+          {["top-1.5 left-1.5", "top-1.5 right-1.5", "bottom-1.5 left-1.5", "bottom-1.5 right-1.5"].map(
+            (pos, idx) => (
+              <div
+                key={idx}
+                className={`absolute ${pos} w-2.5 h-2.5 rounded-full bg-neutral-400 shadow-[inset_0.07rem_0.07rem_0.12rem_rgba(0,0,0,0.8),0_0.07rem_0.12rem_rgba(255,255,255,0.5)] border border-neutral-700 flex items-center justify-center`}
+              >
                 <div
-                    onClick={() => onClick(soup)}
-                    className={`
-                        relative w-64 h-40 flex-shrink-0 rounded-xl border-[3px] cursor-pointer transition-all duration-300 transform-gpu group
-                        ${
-                            isActive
-                                ? "border-orange-400/90 scale-[1.04] shadow-[0_18px_32px_rgba(249,115,22,0.45)] z-10"
-                                : "border-neutral-700/90 hover:scale-105 hover:shadow-[0_14px_26px_rgba(0,0,0,0.65)] hover:border-neutral-200/80"
-                        }
-                        bg-gradient-to-br from-black via-neutral-900 to-black select-none overflow-hidden
-                    `}
-                    style={{
-                        backgroundImage: `linear-gradient(135deg, rgba(255,255,255,0.10), transparent 40%)`
-                    }}
-                >
-                    {/* Plastic Texture & Reflections */}
-                    <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-black/40 pointer-events-none mix-blend-screen"></div>
-                    <div className="absolute inset-0 shadow-[inset_0_2px_6px_rgba(255,255,255,0.12),inset_0_-3px_8px_rgba(0,0,0,0.9)] rounded-xl pointer-events-none"></div>
+                  className={`w-1.5 h-[0.12rem] bg-neutral-700 ${
+                    idx % 2 === 0 ? "rotate-45" : "-rotate-45"
+                  }`}
+                />
+              </div>
+            )
+          )}
 
-                    {/* Metallic Screws */}
-                    <div className="absolute top-1.5 left-1.5 w-2.5 h-2.5 rounded-full bg-neutral-500 shadow-[inset_1px_1px_2px_rgba(0,0,0,0.9),0_1px_2px_rgba(255,255,255,0.4)] border border-neutral-700 flex items-center justify-center">
-                        <div className="w-1.5 h-0.5 bg-neutral-700 rotate-45"></div>
-                    </div>
-                    <div className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-neutral-500 shadow-[inset_1px_1px_2px_rgba(0,0,0,0.9),0_1px_2px_rgba(255,255,255,0.4)] border border-neutral-700 flex items-center justify-center">
-                        <div className="w-1.5 h-0.5 bg-neutral-700 -rotate-45"></div>
-                    </div>
-                    <div className="absolute bottom-1.5 left-1.5 w-2.5 h-2.5 rounded-full bg-neutral-500 shadow-[inset_1px_1px_2px_rgba(0,0,0,0.9),0_1px_2px_rgba(255,255,255,0.4)] border border-neutral-700 flex items-center justify-center">
-                        <div className="w-1.5 h-0.5 bg-neutral-700 -rotate-45"></div>
-                    </div>
-                    <div className="absolute bottom-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-neutral-500 shadow-[inset_1px_1px_2px_rgba(0,0,0,0.9),0_1px_2px_rgba(255,255,255,0.4)] border border-neutral-700 flex items-center justify-center">
-                        <div className="w-1.5 h-0.5 bg-neutral-700 rotate-45"></div>
-                    </div>
-
-                    {/* Cassette Label & Window */}
-                    <div className="absolute inset-[10px] bg-[#1a1a1a] rounded-sm flex flex-col items-center border border-neutral-700/80 shadow-[inset_0_0_12px_rgba(0,0,0,0.65)] overflow-hidden">
-                        {/* Label Top Area */}
-                        <div className="w-full h-12 bg-gradient-to-r from-[#fef7e9] via-[#f5ead6] to-[#ebddc4] flex items-center px-3 border-b border-neutral-700/80 gap-3 relative">
-                            <div
-                                className="absolute inset-0 opacity-25 pointer-events-none"
-                                style={{
-                                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='a'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.004' numOctaves='2' result='t'/%3E%3CfeColorMatrix type='matrix' values='1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 .15 0' in='t' result='c'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23a)' opacity='.6'/%3E%3C/svg%3E")`
-                                }}
-                            ></div>
-
-                            <div
-                                className={`w-9 h-9 rounded-md shadow-md flex items-center justify-center border border-black/15 flex-shrink-0 ${coverColor}`}
-                            >
-                                <Music2 size={16} className="text-white/90" />
-                            </div>
-
-                            <div className="flex flex-col flex-1 min-w-0 z-10">
-                                <div className="flex justify-between items-center w-full">
-                                    <span className="font-handwriting text-base font-bold text-[#2e2a27] truncate leading-none pt-1">
-                                        {labelTitle}
-                                    </span>
-                                    <span className="font-mono text-[9px] text-[#555] font-bold ml-1 border border-[#777] px-1 rounded-sm bg-white/60">
-                                        {isSoupOfTheDay ? "DAY" : "TAPE"}
-                                    </span>
-                                </div>
-                                <span className="font-handwriting text-xs text-[#555] truncate leading-tight">
-                                    {labelTagline}
-                                </span>
-                            </div>
-                        </div>
-
-                        {/* Tape Window */}
-                        <div className="flex-1 w-full flex items-center justify-center relative bg-neutral-900/40 px-2 py-1">
-                            <div className="w-full h-full bg-[#111] rounded-sm border-[3px] border-neutral-700/90 relative overflow-hidden flex items-center justify-between px-4 shadow-[inset_0_0_8px_rgba(0,0,0,0.9)]">
-                                <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/10 via-transparent to-transparent pointer-events-none z-20 mix-blend-screen"></div>
-
-                                <div
-                                    className={`w-10 h-10 rounded-full bg-gradient-to-br from-neutral-200 to-neutral-500 border-4 border-neutral-800 flex items-center justify-center shadow-[0_3px_9px_rgба(0,0,0,0.8)] ${
-                                        isActive ? "animate-spin-slow" : ""
-                                    }`}
-                                >
-                                    <div className="w-3 h-3 bg-neutral-700 rounded-full flex items-center justify-center">
-                                        <div className="w-1 h-1 bg-neutral-300 rounded-full"></div>
-                                    </div>
-                                </div>
-
-                                <div className="flex-1 h-5 bg-[#23140c] mx-2 rounded-sm relative overflow-hidden shadow-[inset_0_1px_4px_rgба(0,0,0,0.9)] border-t border-b border-[#140b07]">
-                                    <div
-                                        className={`absolute top-0 left-0 h-full bg-gradient-to-r from-[#6b422b] via-[#5b3520] to-[#4b2b19] w-1/2 rounded-r-sm ${
-                                            isActive ? "animate-pulse" : ""
-                                        }`}
-                                    ></div>
-                                </div>
-
-                                <div
-                                    className={`w-10 h-10 rounded-full bg-gradient-to-br from-neutral-200 to-neutral-500 border-4 border-neutral-800 flex items-center justify-center shadow-[0_3px_9px_rgаба(0,0,0,0.8)] ${
-                                        isActive ? "animate-spin-slow" : ""
-                                    }`}
-                                >
-                                    <div className="w-3 h-3 bg-neutral-700 rounded-full flex items-center justify-center">
-                                        <div className="w-1 h-1 bg-neutral-300 rounded-full"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Label Bottom */}
-                        <div className="w-full h-5 bg-gradient-to-r from-[#f7efe1] to-[#e9dcc7] flex items-center justify-center px-2 border-t border-neutral-600/80 relative">
-                            <div
-                                className="absolute inset-0 opacity-25 pointer-events-none"
-                                style={{
-                                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='a'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.005' numOctaves='2' result='t'/%3E%3CfeColorMatrix type='matrix' values='1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 .12 0' in='t' result='c'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23a)' opacity='.6'/%3E%3C/svg%3E")`
-                                }}
-                            ></div>
-                            <span className="font-mono text-[9px] text-[#4a433b] uppercase tracking-widest font-bold z-10">
-                                {tapeType} • HIGH BIAS • 70μs EQ
-                            </span>
-                        </div>
-                    </div>
-
-                    {isSoupOfTheDay && (
-                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 pill-label text-[9px] font-mono uppercase tracking-widest px-2 py-0.5 rounded-full text-neutral-800 shadow-[0_5px_10px_rgаба(0,0,0,0.55)]">
-                            Soup of the Day
-                        </div>
-                    )}
+          {/* Label body */}
+          <div className="absolute inset-[0.6rem] bg-[#191919] rounded-md flex flex-col items-center border border-neutral-600/80 shadow-[inset_0_0_0.6rem_rgba(0,0,0,0.6)] overflow-hidden">
+            {/* top label */}
+            <div className="w-full h-12 bg-gradient-to-r from-[#212121] via-[#1a1a1a] to-[#111111] flex items-center px-3 border-b border-neutral-700/80 gap-3 relative">
+              <div className="absolute inset-0 opacity-25 pointer-events-none" />
+              <div
+                className={`w-9 h-9 rounded-md shadow-md flex items-center justify-center border border-black/40 flex-shrink-0 ${coverColor}`}
+              >
+                <Music2 size={16} className="text-white/90" />
+              </div>
+              <div className="flex flex-col flex-1 min-w-0 z-10">
+                <div className="flex justify-between items-center w-full">
+                  <span className="font-handwriting text-base font-bold text-neutral-100 truncate leading-none pt-1">
+                    {labelTitle}
+                  </span>
+                  <span className="font-mono text-[0.55rem] text-neutral-300 font-bold ml-1 border border-neutral-500 px-1 rounded-sm bg-black/40">
+                    {isSoupOfTheDay ? "DAY" : "TAPE"}
+                  </span>
                 </div>
-            );
-        };
-
-        const SpeakerGrille = () => (
-            <div className="w-full h-full p-5 relative overflow-hidden rounded-[1.7rem] border-[6px] border-[#aeb4c0] chrome-bezel">
-                <div className="inner-aluminum rounded-[1.3rem] w-full h-full shadow-[inset_0_10px_18px_rgаба(255,255,255,0.7),inset_0_-14px_20px_rgаба(100,105,118,0.95)] relative">
-                    <div
-                        className="absolute inset-[10%] opacity-85 rounded-[1.1rem]"
-                        style={{
-                            backgroundImage: `radial-gradient(circle at center, #15181f 1px, transparent 1px)`,
-                            backgroundSize: "6px 6px"
-                        }}
-                    ></div>
-                    <div className="absolute inset-[12%] bg-gradient-to-br from-transparent via-black/35 to-black/80 rounded-[1.2rem]"></div>
-                </div>
+                <span className="font-handwriting text-xs text-neutral-400 truncate leading-tight">
+                  {labelTagline}
+                </span>
+              </div>
             </div>
-        );
 
-        // Реальный спектр через AnalyserNode
-        const SpectrumVisualizer = ({ analyser, isPlaying }) => {
-            const canvasRef = useRef(null);
-
-            useEffect(() => {
-                const canvas = canvasRef.current;
-                if (!canvas || !analyser) return;
-                const ctx = canvas.getContext("2d");
-                let animationId;
-
-                const bufferLength = analyser.frequencyBinCount;
-                const dataArray = new Uint8Array(bufferLength);
-
-                const draw = () => {
-                    animationId = requestAnimationFrame(draw);
-
-                    const width = canvas.width;
-                    const height = canvas.height;
-
-                    ctx.clearRect(0, 0, width, height);
-
-                    const gradient = ctx.createLinearGradient(0, 0, 0, height);
-                    gradient.addColorStop(0, "#a7f3d0");
-                    gradient.addColorStop(0.5, "#34d399");
-                    gradient.addColorStop(1, "#047857");
-
-                    if (!isPlaying) {
-                        ctx.fillStyle = gradient;
-                        ctx.globalAlpha = 0.4;
-                        ctx.fillRect(0, height * 0.7, width, height * 0.3);
-                        ctx.globalAlpha = 1;
-                        return;
-                    }
-
-                    analyser.getByteFrequencyData(dataArray);
-
-                    const barCount = bufferLength;
-                    const barWidth = width / barCount;
-
-                    ctx.fillStyle = gradient;
-                    ctx.globalAlpha = 0.95;
-
-                    for (let i = 0; i < barCount; i++) {
-                        const v = dataArray[i] / 255;
-                        const eased = Math.pow(v, 1.6);
-                        const barHeight = eased * height;
-                        const x = i * barWidth;
-                        const y = height - barHeight;
-                        ctx.fillRect(x, y, barWidth * 0.7, barHeight);
-                    }
-
-                    ctx.globalAlpha = 1;
-                };
-
-                draw();
-
-                return () => {
-                    if (animationId) cancelAnimationFrame(animationId);
-                };
-            }, [analyser, isPlaying]);
-
-            return (
-                <div className="flex items-stretch h-11 bg-black/40 p-1.5 rounded-lg border border-emerald-400/30 shadow-[0_0_12px_rgаба(16,185,129,0.4)]">
-                    <canvas
-                        ref={canvasRef}
-                        width={200}
-                        height={36}
-                        className="w-full h-full"
-                    />
-                </div>
-            );
-        };
-
-        const ControlButton = ({ children, onClick, isActive, className = "" }) => (
-            <button
-                onClick={onClick}
-                className={`
-                    relative flex items-center justify-center rounded-full transition-all active:scale-95
-                    bg-gradient-to-b from-[#f9fafb] via-[#e5e7eb] to-[#b7bdc7] border-[3px] border-[#898f9c]
-                    shadow-[0_3px_8px_rgаба(0,0,0,0.5),inset_0_1px_0_rgаба(255,255,255,0.9)]
-                    active:shadow-[inset_0_3px_6px_rgаба(0,0,0,0.4)]
-                    group
-                    ${className}
-                `}
-            >
+            {/* window */}
+            <div className="flex-1 w-full flex items-center justify-center relative bg-neutral-900/80 px-2 py-1">
+              <div className="w-full h-full bg-neutral-950 rounded-sm border-[0.18rem] border-neutral-700 relative overflow-hidden flex items-center justify-between px-4 shadow-[inset_0_0_0.4rem_rgba(0,0,0,0.9)]">
+                <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/8 via-transparent to-transparent pointer-events-none z-20 mix-blend-screen" />
                 <div
-                    className={`
-                        absolute inset-[3px] rounded-full bg-gradient-to-b from-white/85 via-white/35 to-black/10 pointer-events-none
-                        ${isActive ? "from-orange-200 via-orange-400/50 to-orange-900/30" : ""}
-                    `}
-                ></div>
-                <div
-                    className={`text-neutral-800 group-hover:text-neutral-950 transition-colors z-10 ${
-                        isActive ? "text-orange-900" : ""
-                    }`}
+                  className={`w-10 h-10 rounded-full bg-gradient-to-br from-neutral-200 to-neutral-500 border-4 border-neutral-800 flex items-center justify-center shadow-[0_0.15rem_0.6rem_rgba(0,0,0,0.9)] ${
+                    isActive ? "animate-spin-slow" : ""
+                  }`}
                 >
-                    {children}
+                  <div className="w-3 h-3 bg-neutral-800 rounded-full flex items-center justify-center">
+                    <div className="w-1 h-1 bg-neutral-300 rounded-full" />
+                  </div>
                 </div>
-            </button>
-        );
 
-        // формат времени mm:ss
-        const formatTime = (sec) => {
-            if (!sec || !isFinite(sec)) return "00:00";
-            const s = Math.floor(sec);
-            const m = Math.floor(s / 60);
-            const r = s % 60;
-            const mm = m.toString().padStart(2, "0");
-            const ss = r.toString().padStart(2, "0");
-            return `${mm}:${ss}`;
+                <div className="flex-1 h-5 bg-neutral-900 mx-2 rounded-sm relative overflow-hidden shadow-[inset_0_0.06rem_0.18rem_rgba(0,0,0,0.9)] border-t border-b border-black">
+                  <div
+                    className={`absolute top-0 left-0 h-full bg-gradient-to-r from-neutral-700 via-neutral-600 to-neutral-500 w-1/2 rounded-r-sm ${
+                      isActive ? "animate-pulse" : ""
+                    }`}
+                  />
+                </div>
+
+                <div
+                  className={`w-10 h-10 rounded-full bg-gradient-to-br from-neutral-200 to-neutral-500 border-4 border-neutral-800 flex items-center justify-center shadow-[0_0.15rem_0.6rem_rgba(0,0,0,0.9)] ${
+                    isActive ? "animate-spin-slow" : ""
+                  }`}
+                >
+                  <div className="w-3 h-3 bg-neutral-800 rounded-full flex items-center justify-center">
+                    <div className="w-1 h-1 bg-neutral-300 rounded-full" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* bottom label */}
+            <div className="w-full h-5 bg-gradient-to-r from-[#202020] to-[#151515] flex items-center justify-center px-2 border-t border-neutral-700/80">
+              <span className="font-mono text-[0.55rem] text-neutral-300 uppercase tracking-[0.18em] font-bold">
+                {tapeType} • HIGH BIAS • 70μs EQ
+              </span>
+            </div>
+          </div>
+
+          {isSoupOfTheDay && (
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-[0.55rem] font-mono uppercase tracking-[0.18em] px-2 py-0.5 rounded-full bg-orange-400 text-neutral-900 shadow-[0_0.3rem_0.6rem_rgba(0,0,0,0.7)]">
+              Soup of the Day
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    const SpeakerGrille = () => (
+      <div className="w-full h-full p-4 sm:p-5 rounded-[1.8rem] border-[0.35rem] border-slate-300 speaker-shell relative overflow-hidden">
+        <div className="absolute inset-[10%] rounded-[1.4rem] speaker-inset overflow-hidden">
+          <div
+            className="absolute inset-0 opacity-80"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle at center, #020617 0.06rem, transparent 0.06rem)",
+              backgroundSize: "0.35rem 0.35rem",
+            }}
+          />
+          <div className="absolute inset-[12%] bg-gradient-to-br from-transparent via-black/40 to-black/80 rounded-[1.4rem]" />
+        </div>
+      </div>
+    );
+
+    const SpectrumVisualizer = ({ analyser, isPlaying }) => {
+      const canvasRef = useRef(null);
+
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas || !analyser) return;
+        const ctx = canvas.getContext("2d");
+        let animationId;
+
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+
+        const draw = () => {
+          animationId = requestAnimationFrame(draw);
+          const width = canvas.width;
+          const height = canvas.height;
+          ctx.clearRect(0, 0, width, height);
+
+          const gradient = ctx.createLinearGradient(0, 0, 0, height);
+          gradient.addColorStop(0, "#bbf7d0");
+          gradient.addColorStop(0.5, "#34d399");
+          gradient.addColorStop(1, "#047857");
+
+          if (!isPlaying) {
+            ctx.fillStyle = gradient;
+            ctx.globalAlpha = 0.4;
+            ctx.fillRect(0, height * 0.7, width, height * 0.3);
+            ctx.globalAlpha = 1;
+            return;
+          }
+
+          analyser.getByteFrequencyData(dataArray);
+          const barCount = bufferLength;
+          const barWidth = width / barCount;
+
+          ctx.fillStyle = gradient;
+          ctx.globalAlpha = 0.95;
+
+          for (let i = 0; i < barCount; i++) {
+            const v = dataArray[i] / 255;
+            const eased = Math.pow(v, 1.6);
+            const barHeight = eased * height;
+            const x = i * barWidth;
+            const y = height - barHeight;
+            ctx.fillRect(x, y, barWidth * 0.7, barHeight);
+          }
+          ctx.globalAlpha = 1;
         };
 
-        function App() {
-            const [soups, setSoups] = useState([]);
-            const [loadingSoups, setLoadingSoups] = useState(true);
-            const [soupsError, setSoupsError] = useState(null);
+        draw();
+        return () => {
+          if (animationId) cancelAnimationFrame(animationId);
+        };
+      }, [analyser, isPlaying]);
 
-            const [currentSoupId, setCurrentSoupId] = useState(null);
-            const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
-            const [isPlaying, setIsPlaying] = useState(false);
-            const [volume, setVolume] = useState(70);    // UI value 0–100
+      return (
+        <div className="flex items-stretch h-10 sm:h-11 bg-black/40 p-1.5 rounded-lg border border-emerald-400/30 shadow-[0_0_0.75rem_rgba(16,185,129,0.45)]">
+          <canvas
+            ref={canvasRef}
+            width={200}
+            height={36}
+            className="w-full h-full"
+          />
+        </div>
+      );
+    };
 
-            // время
-            const [currentTime, setCurrentTime] = useState(0);
-            const [duration, setDuration] = useState(0);
+    const ControlButton = ({ children, onClick, isActive, className = "" }) => (
+      <button
+        onClick={onClick}
+        type="button"
+        className={`
+          relative flex items-center justify-center rounded-full transition-all active:scale-95
+          bg-gradient-to-b from-slate-50 to-slate-300 border-[0.18rem] border-slate-500
+          shadow-[0_0.2rem_0.5rem_rgba(0,0,0,0.5),inset_0_0.05rem_0_rgba(255,255,255,0.9)]
+          active:shadow-[inset_0_0.2rem_0.4rem_rgba(0,0,0,0.45)]
+          group
+          ${className}
+        `}
+      >
+        <div
+          className={`
+            absolute inset-[0.18rem] rounded-full bg-gradient-to-b from-white/80 via-white/20 to-black/10 pointer-events-none
+            ${isActive ? "from-orange-200 via-orange-400/50 to-orange-900/20" : ""}
+          `}
+        />
+        <div
+          className={`text-neutral-800 group-hover:text-neutral-950 transition-colors z-10 ${
+            isActive ? "text-orange-900" : ""
+          }`}
+        >
+          {children}
+        </div>
+      </button>
+    );
 
-            const [autoplayBlocked, setAutoplayBlocked] = useState(false);
-            const [unsupportedFormatMsg, setUnsupportedFormatMsg] = useState(null);
+    const formatTime = (sec) => {
+      if (!sec || !isFinite(sec)) return "00:00";
+      const s = Math.floor(sec);
+      const m = Math.floor(s / 60);
+      const r = s % 60;
+      const mm = m.toString().padStart(2, "0");
+      const ss = r.toString().padStart(2, "0");
+      return `${mm}:${ss}`;
+    };
 
-            const audioRef = useRef(null);
-            const scrollContainerRef = useRef(null);
+    function App() {
+      const [soups, setSoups] = useState([]);
+      const [loadingSoups, setLoadingSoups] = useState(true);
+      const [soupsError, setSoupsError] = useState(null);
 
-            // Web Audio API refs
-            const audioContextRef = useRef(null);
-            const analyserNodeRef = useRef(null);
-            const [analyserNode, setAnalyserNode] = useState(null);
+      const [currentSoupId, setCurrentSoupId] = useState(null);
+      const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+      const [isPlaying, setIsPlaying] = useState(false);
+      const [volume, setVolume] = useState(70);
 
-            // анимация толчка корпуса при перемотке
-            const [jogAnimation, setJogAnimation] = useState(null);
+      const [currentTime, setCurrentTime] = useState(0);
+      const [duration, setDuration] = useState(0);
 
-            // интервал скретч-перемотки
-            const scrubIntervalRef = useRef(null);
-            const scrubDirectionRef = useRef(null);
+      const [autoplayBlocked, setAutoplayBlocked] = useState(false);
+      const [unsupportedFormatMsg, setUnsupportedFormatMsg] = useState(null);
 
-            const [todayInfo] = useState(() => {
-                const d = new Date();
-                return { dayIndex: d.getDay() };
-            });
+      const audioRef = useRef(null);
+      const scrollContainerRef = useRef(null);
 
-            const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      const audioContextRef = useRef(null);
+      const [analyserNode, setAnalyserNode] = useState(null);
 
-            // DEBUG day override
-            const [debugDayIndex, setDebugDayIndex] = useState(null);
-            const effectiveDayIndex = debugDayIndex ?? todayInfo.dayIndex;
+      const [jogAnimation, setJogAnimation] = useState(null);
+      const jogIntervalRef = useRef(null);
 
-            const currentSoup = soups.find((s) => s.id === currentSoupId) || null;
-            const currentTrack =
-                currentSoup && currentSoup.tracks && currentSoup.tracks.length > 0
-                    ? currentSoup.tracks[currentTrackIndex]
-                    : null;
+      const [todayInfo] = useState(() => {
+        const d = new Date();
+        return { dayIndex: d.getDay() };
+      });
+      const dayNames = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ];
+      const [debugDayIndex, setDebugDayIndex] = useState(null);
+      const effectiveDayIndex = debugDayIndex ?? todayInfo.dayIndex;
 
-            // крупное имя трека
-            const displayTrackTitle =
-                (currentTrack && (currentTrack.title || currentTrack.file)) ||
-                "Unknown Track";
+      const currentSoup = soups.find((s) => s.id === currentSoupId) || null;
+      const currentTrack =
+        currentSoup && currentSoup.tracks && currentSoup.tracks.length > 0
+          ? currentSoup.tracks[currentTrackIndex]
+          : null;
 
-            const soupTitle = (currentSoup && (currentSoup.playlistTitle || currentSoup.title)) || "";
-            const soupTagline = (currentSoup && (currentSoup.playlistTagline || currentSoup.tagline)) || "";
+      const uiVolumeToGain = (v) => {
+        const n = Math.min(100, Math.max(0, v)) / 100;
+        return n * n;
+      };
 
-            // маппер громкости
-            const uiVolumeToGain = (v) => {
-                const n = Math.min(100, Math.max(0, v)) / 100;
-                return n * n;
-            };
+      // Web Audio init
+      useEffect(() => {
+        const audio = audioRef.current;
+        if (!audio) return;
 
-            // Web Audio API init
-            useEffect(() => {
-                const audio = audioRef.current;
-                if (!audio) return;
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) {
+          console.warn("Web Audio API not supported");
+          return;
+        }
+        const ctx = new AudioContextClass();
+        const source = ctx.createMediaElementSource(audio);
+        const analyser = ctx.createAnalyser();
+        analyser.fftSize = 128;
 
-                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-                if (!AudioContextClass) {
-                    console.warn("Web Audio API not supported in this browser.");
-                    return;
-                }
+        source.connect(analyser);
+        analyser.connect(ctx.destination);
 
-                const ctx = new AudioContextClass();
-                const source = ctx.createMediaElementSource(audio);
-                const analyser = ctx.createAnalyser();
-                analyser.fftSize = 128;
+        audioContextRef.current = ctx;
+        setAnalyserNode(analyser);
 
-                source.connect(analyser);
-                analyser.connect(ctx.destination);
+        return () => {
+          try {
+            ctx.close();
+          } catch {}
+        };
+      }, []);
 
-                audioContextRef.current = ctx;
-                analyserNodeRef.current = analyser;
-                setAnalyserNode(analyser);
-
-                return () => {
-                    try {
-                        ctx.close();
-                    } catch (e) {
-                        console.warn("Error closing AudioContext", e);
-                    }
-                };
-            }, []);
-
-            // cleanup интервала скретчинга
-            useEffect(() => {
-                return () => {
-                    if (scrubIntervalRef.current) {
-                        clearInterval(scrubIntervalRef.current);
-                        scrubIntervalRef.current = null;
-                    }
-                };
-            }, []);
-
-            // загрузка soups/index.json
-            useEffect(() => {
-                async function loadSoupsIndex() {
-                    try {
-                        const res = await fetch("soups/index.json");
-                        if (!res.ok) {
-                            throw new Error("soups/index.json not found");
-                        }
-                        const data = await res.json();
-                        const list = (data.soups || []).map((s, idx) => ({
-                            ...s,
-                            tracks: [],
-                            tracksLoaded: false,
-                            loadError: false,
-                            order: idx
-                        }));
-                        setSoups(list);
-                        setSoupsError(null);
-                    } catch (err) {
-                        console.error(err);
-                        setSoupsError("Не удалось загрузить soups/index.json. Проверьте путь и JSON.");
-                    } finally {
-                        setLoadingSoups(false);
-                    }
-                }
-                loadSoupsIndex();
-            }, []);
-
-            // суп дня по умолчанию
-            useEffect(() => {
-                if (soups.length === 0 || currentSoupId) return;
-                const candidates = soups.filter(
-                    (s) => s.type === "day" && typeof s.dayOfWeek === "number"
-                );
-                let soupOfTheDay =
-                    candidates.find((s) => s.dayOfWeek === effectiveDayIndex) || soups[0];
-                if (soupOfTheDay) {
-                    setCurrentSoupId(soupOfTheDay.id);
-                    setCurrentTrackIndex(0);
-                    setIsPlaying(false);
-                }
-            }, [soups, currentSoupId, effectiveDayIndex]);
-
-            // подгрузка playlist.json
-            useEffect(() => {
-                const soup = soups.find((s) => s.id === currentSoupId);
-                if (!soup || soup.tracksLoaded) return;
-
-                async function loadPlaylist() {
-                    try {
-                        const res = await fetch(soup.basePath + "/playlist.json");
-                        if (!res.ok) throw new Error("playlist.json not found for " + soup.id);
-                        const data = await res.json();
-                        const tracks = data.tracks || [];
-                        setSoups((prev) =>
-                            prev.map((s) =>
-                                s.id === soup.id
-                                    ? {
-                                          ...s,
-                                          tracks,
-                                          tracksLoaded: true,
-                                          playlistTitle: data.title || s.title,
-                                          playlistTagline: data.tagline || s.tagline
-                                      }
-                                    : s
-                            )
-                        );
-                    } catch (err) {
-                        console.error(err);
-                        setSoups((prev) =>
-                            prev.map((s) =>
-                                s.id === soup.id
-                                    ? { ...s, tracks: [], tracksLoaded: true, loadError: true }
-                                    : s
-                            )
-                        );
-                    }
-                }
-
-                loadPlaylist();
-            }, [currentSoupId, soups]);
-
-            // смена трека/супа
-            useEffect(() => {
-                const audio = audioRef.current;
-                if (!audio || !currentSoup || !currentTrack) return;
-                setUnsupportedFormatMsg(null);
-                setAutoplayBlocked(false);
-                setCurrentTime(0);
-                setDuration(0);
-                audio.playbackRate = 1;
-
-                const src = currentSoup.basePath + "/" + currentTrack.file;
-                audio.src = src;
-                audio.load();
-
-                try {
-                    const ext = (currentTrack.file || "").split('.').pop().toLowerCase();
-                    const mimeMap = {
-                        mp3: 'audio/mpeg',
-                        m4a: 'audio/mp4',
-                        mp4: 'audio/mp4',
-                        webm: 'audio/webm',
-                        ogg: 'audio/ogg',
-                        wav: 'audio/wav',
-                        aac: 'audio/aac'
-                    };
-                    const mime = mimeMap[ext] || '';
-                    if (mime && audio.canPlayType) {
-                        const can = audio.canPlayType(mime);
-                        if (!can) {
-                            setUnsupportedFormatMsg(`Browser may not support audio type ${mime} (file: ${currentTrack.file}).`);
-                        }
-                    }
-                } catch (e) {
-                    console.warn('Format check failed', e);
-                }
-
-                const onError = () => {
-                    setUnsupportedFormatMsg(`Failed to load ${currentTrack.file}. Check path and server MIME type.`);
-                };
-                const onLoadedMetadata = () => {
-                    setDuration(audio.duration || 0);
-                };
-
-                audio.addEventListener('error', onError);
-                audio.addEventListener('loadedmetadata', onLoadedMetadata);
-
-                return () => {
-                    audio.removeEventListener('error', onError);
-                    audio.removeEventListener('loadedmetadata', onLoadedMetadata);
-                };
-            }, [currentSoupId, currentTrackIndex, soups]);
-
-            // громкость
-            useEffect(() => {
-                if (audioRef.current) {
-                    audioRef.current.volume = uiVolumeToGain(volume);
-                }
-            }, [volume]);
-
-            // обновление времени и конец трека
-            useEffect(() => {
-                const audio = audioRef.current;
-                if (!audio) return;
-
-                const soup = soups.find((s) => s.id === currentSoupId);
-
-                const handleTimeUpdate = () => {
-                    setCurrentTime(audio.currentTime || 0);
-                    if (audio.duration && !duration) {
-                        setDuration(audio.duration);
-                    }
-                };
-
-                const handleEnded = () => {
-                    setCurrentTime(0);
-                    audio.playbackRate = 1;
-                    if (!soup || !soup.tracks || soup.tracks.length === 0) return;
-                    setCurrentTrackIndex((prev) => {
-                        const trackCount = soup.tracks.length;
-                        if (trackCount === 0) return prev;
-                        return prev + 1 < trackCount ? prev + 1 : 0;
-                    });
-                };
-
-                audio.addEventListener("timeupdate", handleTimeUpdate);
-                audio.addEventListener("ended", handleEnded);
-
-                return () => {
-                    audio.removeEventListener("timeupdate", handleTimeUpdate);
-                    audio.removeEventListener("ended", handleEnded);
-                };
-            }, [currentSoupId, soups, duration]);
-
-            // play / pause
-            useEffect(() => {
-                const audio = audioRef.current;
-                if (!audio) return;
-
-                if (isPlaying && currentSoup && currentTrack) {
-                    if (audioContextRef.current && audioContextRef.current.state === "suspended") {
-                        audioContextRef.current.resume().catch(() => {});
-                    }
-
-                    const p = audio.play();
-                    if (p && p.catch) {
-                        p.catch((err) => {
-                            console.log("Playback error:", err);
-                            if (err && (err.name === 'NotAllowedError' || /play.*not allowed/i.test(err.message || ''))) {
-                                setAutoplayBlocked(true);
-                            }
-                            setIsPlaying(false);
-                        });
-                    }
-                } else {
-                    audio.pause();
-                }
-            }, [isPlaying, currentSoupId, currentTrackIndex, currentSoup, currentTrack]);
-
-            // --- Handlers ---
-            const handleSoupSelect = (soup) => {
-                setCurrentSoupId(soup.id);
-                setCurrentTrackIndex(0);
-                setCurrentTime(0);
-                setDuration(0);
-                setIsPlaying(true);
-            };
-
-            const togglePlay = () => {
-                if (!currentSoup || !currentTrack) return;
-                setIsPlaying((prev) => !prev);
-            };
-
-            const handleNext = () => {
-                if (!currentSoup || !currentSoup.tracks || currentSoup.tracks.length === 0) return;
-                const audio = audioRef.current;
-                if (audio) audio.playbackRate = 1;
-                if (scrubIntervalRef.current) {
-                    clearInterval(scrubIntervalRef.current);
-                    scrubIntervalRef.current = null;
-                }
-                setCurrentTrackIndex((prev) => {
-                    const count = currentSoup.tracks.length;
-                    if (count === 0) return prev;
-                    return prev + 1 < count ? prev + 1 : 0;
-                });
-            };
-
-            const handlePrev = () => {
-                if (!currentSoup || !currentSoup.tracks || currentSoup.tracks.length === 0) return;
-                const audio = audioRef.current;
-                if (audio) audio.playbackRate = 1;
-                if (scrubIntervalRef.current) {
-                    clearInterval(scrubIntervalRef.current);
-                    scrubIntervalRef.current = null;
-                }
-                setCurrentTrackIndex((prev) => {
-                    const count = currentSoup.tracks.length;
-                    if (count === 0) return prev;
-                    return prev - 1 >= 0 ? prev - 1 : count - 1;
-                });
-            };
-
-            // запуск скретч-перемотки при удержании
-            const startScrub = (direction) => {
-                const audio = audioRef.current;
-                if (!audio || !audio.duration) return;
-
-                scrubDirectionRef.current = direction;
-
-                // если было на паузе — запускаем
-                if (audio.paused) {
-                    setIsPlaying(true);
-                    audio.play().catch(() => {});
-                }
-
-                // чуть ускоряем звук (pitch вверх)
-                audio.playbackRate = 2.2;
-
-                // каждые ~60мс двигаем позицию
-                if (scrubIntervalRef.current) {
-                    clearInterval(scrubIntervalRef.current);
-                }
-
-                const step = 0.25; // сек за тик
-                scrubIntervalRef.current = setInterval(() => {
-                    if (!audio.duration) return;
-                    let newTime =
-                        direction === "forward"
-                            ? audio.currentTime + step
-                            : audio.currentTime - step;
-                    newTime = Math.max(0, Math.min(audio.duration, newTime));
-                    audio.currentTime = newTime;
-                    setCurrentTime(newTime);
-                }, 60);
-
-                setJogAnimation(direction === "forward" ? "forward" : "back");
-            };
-
-            // остановка скретч-перемотки при отпускании
-            const stopScrub = () => {
-                const audio = audioRef.current;
-                if (scrubIntervalRef.current) {
-                    clearInterval(scrubIntervalRef.current);
-                    scrubIntervalRef.current = null;
-                }
-                scrubDirectionRef.current = null;
-                setJogAnimation(null);
-                if (audio) {
-                    audio.playbackRate = 1;
-                }
-            };
-
-            // колесо по громкости
-            const handleVolumeWheel = (e) => {
-                e.preventDefault();
-                const step = 5;
-                const direction = e.deltaY > 0 ? -1 : 1; // вверх — громче
-                setVolume((prev) => {
-                    const next = Math.max(0, Math.min(100, prev + direction * step));
-                    return next;
-                });
-            };
-
-            const scroll = (direction) => {
-                if (scrollContainerRef.current) {
-                    const { current } = scrollContainerRef;
-                    const scrollAmount = 300;
-                    if (direction === "left") {
-                        current.scrollBy({ left: -scrollAmount, behavior: "smooth" });
-                    } else {
-                        current.scrollBy({ left: scrollAmount, behavior: "smooth" });
-                    }
-                }
-            };
-
-            const daySoupForToday = soups.find(
-                (s) => s.type === "day" && s.dayOfWeek === effectiveDayIndex
+      // load soups index
+      useEffect(() => {
+        async function loadSoupsIndex() {
+          try {
+            const res = await fetch("soups/index.json");
+            if (!res.ok) throw new Error("soups/index.json not found");
+            const data = await res.json();
+            const list = (data.soups || []).map((s, idx) => ({
+              ...s,
+              tracks: [],
+              tracksLoaded: false,
+              loadError: false,
+              order: idx,
+            }));
+            setSoups(list);
+            setSoupsError(null);
+          } catch (err) {
+            console.error(err);
+            setSoupsError(
+              "Не удалось загрузить soups/index.json. Проверьте путь и JSON."
             );
+          } finally {
+            setLoadingSoups(false);
+          }
+        }
+        loadSoupsIndex();
+      }, []);
 
-            const trackInfoText =
-                currentSoup && currentTrack
-                    ? `Track ${currentTrackIndex + 1}/${currentSoup.tracks.length}`
-                    : "No track";
+      // pick soup of the day
+      useEffect(() => {
+        if (soups.length === 0 || currentSoupId) return;
+        const candidates = soups.filter(
+          (s) => s.type === "day" && typeof s.dayOfWeek === "number"
+        );
+        const soupOfTheDay =
+          candidates.find((s) => s.dayOfWeek === effectiveDayIndex) || soups[0];
+        if (soupOfTheDay) {
+          setCurrentSoupId(soupOfTheDay.id);
+          setCurrentTrackIndex(0);
+          setIsPlaying(false);
+        }
+      }, [soups, currentSoupId, effectiveDayIndex]);
 
-            const currentTimeText = formatTime(currentTime);
-            const durationText = formatTime(duration);
+      // load playlist
+      useEffect(() => {
+        const soup = soups.find((s) => s.id === currentSoupId);
+        if (!soup || soup.tracksLoaded) return;
 
-            // псевдо-тюнинг (просто для вида) — смещаем указатель по треку
-            const tuningPercent = duration ? (currentTime / duration) : 0.3;
-
-            const soupInfoLine =
-                currentSoup
-                    ? (currentSoup.type === "day"
-                        ? `Soup of the day: ${soupTitle || currentSoup.id}`
-                        : `Cassette: ${soupTitle || currentSoup.id}`)
-                    : "";
-
-            return (
-                <div className="w-full flex flex-col items-center no-select">
-                    {/* Заголовок */}
-                    <h2 className="text-2xl md:text-3xl font-semibold tracking-[0.35em] text-neutral-100 mb-3 uppercase text-center flex items-center justify-center gap-4 drop-shadow-[0_3px_10px_rgаба(0,0,0,0.8)]">
-                        <Disc className="text-orange-400/80 drop-shadow-[0_0_10px_rgаба(249,115,22,0.7)]" size={32} />
-                        Суп дня
-                        <Disc className="text-orange-400/80 drop-shadow-[0_0_10px_rgаба(249,115,22,0.7)]" size={32} />
-                    </h2>
-                    <p className="text-[11px] uppercase tracking-[0.25em] text-neutral-400 mb-6 font-mono">
-                        Apple-style Soup Radio Console
-                    </p>
-
-                    {/* DEBUG day override UI (можно убрать в проде) */}
-                    <div className="mb-3 flex flex-col sm:flex-row items-center justify-center gap-2 text-[11px] text-neutral-400 font-mono bg-black/30 px-3 py-2 rounded-full border border-white/10 shadow-[0_6px_16px_rgаба(0,0,0,0.65)]">
-                        <span>Debug day:</span>
-                        <select
-                            value={debugDayIndex !== null ? debugDayIndex : todayInfo.dayIndex}
-                            onChange={(e) => setDebugDayIndex(Number(e.target.value))}
-                            className="bg-neutral-900/80 border border-neutral-600 rounded-full px-2 py-1 text-[11px] outline-none"
-                        >
-                            {dayNames.map((name, idx) => (
-                                <option key={idx} value={idx}>
-                                    {idx} — {name}
-                                </option>
-                            ))}
-                        </select>
-                        <button
-                            type="button"
-                            onClick={() => setDebugDayIndex(null)}
-                            className="px-2 py-1 border border-neutral-600 rounded-full bg-neutral-800 hover:bg-neutral-700 transition"
-                        >
-                            Real day
-                        </button>
-                        <span className="text-neutral-500">
-                            Today: {dayNames[effectiveDayIndex]}
-                        </span>
-                    </div>
-
-                    {daySoupForToday && (
-                        <p className="text-xs md:text-sm text-neutral-300 mb-6 text-center font-mono">
-                            Soup of the day:{" "}
-                            <span className="text-orange-300">
-                                {daySoupForToday.playlistTitle || daySoupForToday.title}
-                            </span>
-                        </p>
-                    )}
-
-                    {loadingSoups && (
-                        <p className="text-xs text-neutral-400 mb-4 font-mono">
-                            Loading soups from <span className="underline">soups/index.json</span>...
-                        </p>
-                    )}
-                    {soupsError && (
-                        <p className="text-xs text-red-400 mb-4 font-mono">{soupsError}</p>
-                    )}
-                    {unsupportedFormatMsg && (
-                        <p className="text-xs text-yellow-300 mb-4 font-mono">{unsupportedFormatMsg}</p>
-                    )}
-                    {autoplayBlocked && (
-                        <div className="text-xs text-amber-300 mb-4 font-mono">
-                            Autoplay blocked — press Play.
-                            If you opened this page with <code>file://</code>, use a local HTTP server:
-                            <div className="mt-1 font-mono text-[11px]">
-                                <code>python -m http.server 8000</code>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Полка с кассетами */}
-                    <div className="w-full max-w-5xl mb-12 relative group/shelf">
-                        <button
-                            onClick={() => scroll("left")}
-                            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-20 p-2.5 rounded-full bg-black/70 text-neutral-200 hover:text-orange-300 hover:bg-black/85 border border-white/20 shadow-[0_8px_18px_rgаба(0,0,0,0.85)] transition-all opacity-0 group-hover/shelf:opacity-100 focus:opacity-100 active:scale-95 hidden md:flex"
-                        >
-                            <ChevronLeft size={20} />
-                        </button>
-
-                        <button
-                            onClick={() => scroll("right")}
-                            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-20 p-2.5 rounded-full bg-black/70 text-neutral-200 hover:text-orange-300 hover:bg-black/85 border border-white/20 shadow-[0_8px_18px_rgаба(0,0,0,0.85)] transition-all opacity-0 group-hover/shelf:opacity-100 focus:opacity-100 active:scale-95 hidden md:flex"
-                        >
-                            <ChevronRight size={20} />
-                        </button>
-
-                        <div className="wood-shelf rounded-3xl p-6 shadow-[0_28px_70px_rgаба(0,0,0,0.9),inset_0_2px_5px_rgаба(255,255,255,0.12)] border border-[#5b3726] relative overflow-hidden">
-                            <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/45 pointer-events-none"></div>
-
-                            <div
-                                ref={scrollContainerRef}
-                                className="flex gap-8 overflow-x-auto pb-8 pt-2 px-4 no-scrollbar scroll-smooth snap-x snap-mandatory"
-                            >
-                                {soups.map((soup) => {
-                                    const isDaySoup =
-                                        soup.type === "day" &&
-                                        typeof soup.dayOfWeek === "number";
-                                    const isTodayDaySoup =
-                                        isDaySoup && soup.dayOfWeek === effectiveDayIndex;
-                                    return (
-                                        <div
-                                            key={soup.id}
-                                            className="relative group flex-shrink-0 snap-center"
-                                        >
-                                            <Cassette
-                                                soup={soup}
-                                                isActive={currentSoupId === soup.id}
-                                                isSoupOfTheDay={isTodayDaySoup}
-                                                onClick={handleSoupSelect}
-                                            />
-                                            <div className="absolute -bottom-3 left-[5%] w-[90%] h-4 bg-black/70 blur-md rounded-full pointer-events-none"></div>
-                                        </div>
-                                    );
-                                })}
-                                {soups.length === 0 && !loadingSoups && (
-                                    <div className="text-sm text-neutral-300 font-mono">
-                                        No soups configured yet. Create <code>soups/index.json</code>.
-                                    </div>
-                                )}
-                            </div>
-                            <div className="absolute bottom-0 left-0 w-full h-5 bg-gradient-to-b from-[#7b5237] to-[#3b2116] border-t border-[#8d5a3f] shadow-[0_-4px_9px_rgаба(0,0,0,0.65)]"></div>
-                        </div>
-                    </div>
-
-                    {/* Радио-блок — основной skeuomorphic Apple-радио */}
-                    <div
-                        className={`
-                            w-full max-w-3xl rounded-[2.7rem] p-[14px]
-                            chrome-bezel relative overflow-visible z-10 mt-auto
-                            ${jogAnimation === "forward" ? "jog-forward" : ""}
-                            ${jogAnimation === "back" ? "jog-back" : ""}
-                        `}
-                    >
-                        {/* Верхняя алюминиевая рамка с ручкой */}
-                        <div className="relative rounded-[2.1rem] brushed-metal border border-white/40 shadow-[0_18px_40px_rgаба(0,0,0,0.9),inset_0_1px_0_rgаба(255,255,255,0.9),inset_0_-1px_0_rgаба(120,120,130,0.9)]">
-                            {/* Верхняя хромированная ручка */}
-                            <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-44 h-4 bg-gradient-to-b from-[#f8fafc] via-[#d2d7e0] to-[#9ca3af] rounded-b-2xl shadow-[0_8px_18px_rgаба(0,0,0,0.8)] border border-white/60 border-t-0">
-                                <div className="absolute inset-x-6 bottom-1 h-[1px] bg-black/30"></div>
-                            </div>
-
-                            {/* Верхние выпирающие кнопки перемотки (hold для скретчинг) */}
-                            <div className="absolute -top-8 right-10 flex gap-3">
-                                <button
-                                    onMouseDown={() => startScrub("back")}
-                                    onMouseUp={stopScrub}
-                                    onMouseLeave={stopScrub}
-                                    className="top-key w-11 h-5 rounded-t-lg border border-neutral-600/80 border-b-0 text-[9px] font-mono text-neutral-700 tracking-[0.17em] flex items-center justify-center"
-                                >
-                                    REW
-                                </button>
-                                <button
-                                    onMouseDown={() => startScrub("forward")}
-                                    onMouseUp={stopScrub}
-                                    onMouseLeave={stopScrub}
-                                    className="top-key w-11 h-5 rounded-t-lg border border-neutral-600/80 border-b-0 text-[9px] font-mono text-neutral-700 tracking-[0.17em] flex items-center justify-center"
-                                >
-                                    FWD
-                                </button>
-                            </div>
-
-                            {/* Винты корпуса */}
-                            <div className="absolute top-4 left-5 w-4 h-4 rounded-full bg-neutral-400 shadow-[inset_1px_1px_2px_rgаба(0,0,0,0.85),0_1px_2px_rgаба(255,255,255,0.7)] border border-neutral-700 flex items-center justify-center">
-                                <div className="w-2 h-[2px] bg-neutral-700 rotate-45"></div>
-                            </div>
-                            <div className="absolute top-4 right-5 w-4 h-4 rounded-full bg-neutral-400 shadow-[inset_1px_1px_2px_rgаба(0,0,0,0.85),0_1px_2px_rgаба(255,255,255,0.7)] border border-neutral-700 flex items-center justify-center">
-                                <div className="w-2 h-[2px] bg-neutral-700 -rotate-45"></div>
-                            </div>
-
-                            {/* Внутренний блок: динамик + дисплей + управление */}
-                            <div className="flex flex-col md:flex-row gap-7 items-center md:items-stretch px-8 pt-10 pb-8">
-                                {/* Speaker блок */}
-                                <div className="w-full md:w-[32%] aspect-[4/5] relative flex items-center justify-center">
-                                    <SpeakerGrille />
-                                    <div className="absolute bottom-5 left-6 pill-label text-[9px] font-mono uppercase tracking-[0.18em] px-3 py-1.5 rounded-full text-neutral-800 flex items-center gap-1 shadow-[0_9px_18px_rgаба(0,0,0,0.7)]">
-                                        <RadioIcon size={12} className="text-orange-500" />
-                                        <span>Суп дня</span>
-                                    </div>
-                                </div>
-
-                                {/* Центральная стеклянная панель (Apple дисплей) */}
-                                <div className="flex-1 flex flex-col gap-5 w-full">
-                                    {/* Стеклянный дисплей */}
-                                    <div className="glass-panel rounded-2xl p-[3px]">
-                                        <div className="relative rounded-[1.3rem] overflow-hidden bg-[#020714]/95">
-                                            {/* Верхний бликовый слой */}
-                                            <div className="glass-highlight absolute inset-0 pointer-events-none mix-blend-screen opacity-60"></div>
-
-                                            {/* Содержимое дисплея */}
-                                            <div className="relative z-10 px-5 pt-4 pb-4 flex flex-col gap-4">
-                                                {/* Верхняя статус-строка */}
-                                                <div className="flex justify-between items-center text-[10px] font-mono uppercase tracking-[0.18em] text-emerald-200/80">
-                                                    <span className="flex items-center gap-1.5">
-                                                        <BatteryMedium size={12} /> 80%
-                                                    </span>
-                                                    <span className="flex items-center gap-1.5">
-                                                        <Activity size={12} />
-                                                        {currentSoup && currentTrack ? "STREAM" : "---"}
-                                                    </span>
-                                                    <span
-                                                        className={`flex items-center gap-1.5 ${
-                                                            isPlaying
-                                                                ? "text-emerald-300 animate-pulse drop-shadow-[0_0_7px_rgаба(16,185,129,0.9)]"
-                                                                : ""
-                                                        }`}
-                                                    >
-                                                        {isPlaying ? "PLAYING" : "PAUSED"}
-                                                    </span>
-                                                </div>
-
-                                                {/* Крупное название трека + подписи */}
-                                                <div className="flex gap-4 items-center">
-                                                    <div
-                                                        className={`w-16 h-16 rounded-xl flex-shrink-0 flex items-center justify-center bg-neutral-900 shadow-[0_7px_18px_rgаба(0,0,0,0.9)] border border-white/10 relative overflow-hidden`}
-                                                    >
-                                                        <div className="absolute inset-0 bg-gradient-to-br from-white/35 via-transparent to-black/60 pointer-events-none mix-blend-screen"></div>
-                                                        <Music2 size={26} className="text-white/90 drop-shadow-[0_0_8px_rgаба(0,0,0,0.9)]" />
-                                                    </div>
-                                                    <div className="min-w-0">
-                                                        {/* Главное: название трека крупно */}
-                                                        <h1 className="text-emerald-200 font-mono text-[21px] md:text-[23px] tracking-tight truncate leading-snug drop-shadow-[0_0_9px_rgаба(16,185,129,0.8)]">
-                                                            {displayTrackTitle}
-                                                        </h1>
-
-                                                        {/* Под ним — какая-то инфа по треку/плейлисту */}
-                                                        <p className="text-emerald-400/90 font-mono text-[11px] uppercase tracking-[0.22em] mt-1 truncate">
-                                                            {soupTitle || "Unknown soup"}
-                                                        </p>
-                                                        <p className="text-[10px] text-emerald-500/80 font-mono mt-0.5 truncate">
-                                                            {soupTagline || trackInfoText}
-                                                        </p>
-                                                    </div>
-                                                </div>
-
-                                                {/* Внизу — суп дня и служебная инфа, мелко */}
-                                                <div className="flex items-center justify-between">
-                                                    <div className="flex flex-col text-[10px] font-mono text-emerald-400/80 gap-[2px]">
-                                                        <span>
-                                                            Time: {currentTimeText} / {durationText}
-                                                        </span>
-                                                        <span>
-                                                            Track: {trackInfoText}
-                                                        </span>
-                                                        {soupInfoLine && (
-                                                            <span className="text-emerald-500/80">
-                                                                {soupInfoLine}
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                    <SpectrumVisualizer analyser={analyserNode} isPlaying={isPlaying} />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Тюнерная шкала — радиоприёмник */}
-                                    <div className="tuner-glass rounded-xl px-4 py-3 flex flex-col gap-2 border border-black/60">
-                                        <div className="flex justify-between text-[10px] font-mono text-emerald-100/70 uppercase tracking-[0.18em]">
-                                            <span>FM</span>
-                                            <span>Soup Dial</span>
-                                            <span>STEREO</span>
-                                        </div>
-                                        <div className="relative mt-1">
-                                            {/* шкала частот */}
-                                            <div className="h-8 flex items-center">
-                                                <div className="w-full h-[1px] bg-gradient-to-r from-emerald-900 via-emerald-500/80 to-emerald-900 opacity-80"></div>
-                                            </div>
-                                            {/* деления */}
-                                            <div className="absolute inset-x-0 top-[3px] flex justify-between text-[9px] font-mono text-emerald-200/80">
-                                                {["88","92","96","100","104","108"].map((v) => (
-                                                    <span key={v}>{v}</span>
-                                                ))}
-                                            </div>
-                                            {/* смещаемая «иголка» */}
-                                            <div
-                                                className="absolute left-0 top-[7px] h-7 flex items-center transition-all duration-150"
-                                                style={{ transform: `translateX(${tuningPercent * 100}%) translateX(-50%)` }}
-                                            >
-                                                <div className="w-[2px] h-full bg-gradient-to-b from-rose-100 via-rose-400 to-rose-900 shadow-[0_0_9px_rgаба(248,113,113,0.9)]"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Панель управления — Apple-кнопки + громкость */}
-                                    <div className="grid grid-cols-5 gap-5 bg-gradient-to-br from-[#f5f6f8] via-[#d7dbe4] to-[#b7bdc7] p-4 rounded-2xl shadow-[inset_0_2px_3px_rgаба(255,255,255,0.9),0_14px_30px_rgаба(0,0,0,0.75)] border border-white/70">
-                                        <div className="col-span-3 flex items-center justify-evenly z-10">
-                                            <ControlButton className="p-3" onClick={handlePrev}>
-                                                <SkipBack size={20} fill="currentColor" />
-                                            </ControlButton>
-
-                                            <ControlButton
-                                                onClick={togglePlay}
-                                                isActive={isPlaying}
-                                                className={`w-16 h-16 ${
-                                                    isPlaying
-                                                        ? "!from-orange-200 !to-orange-500 !border-orange-500"
-                                                        : ""
-                                                }`}
-                                            >
-                                                {isPlaying ? (
-                                                    <Pause
-                                                        size={26}
-                                                        fill="currentColor"
-                                                        className="drop-shadow-sm"
-                                                    />
-                                                ) : (
-                                                    <Play
-                                                        size={26}
-                                                        fill="currentColor"
-                                                        className="ml-1 drop-shadow-sm"
-                                                    />
-                                                )}
-                                            </ControlButton>
-
-                                            <ControlButton className="p-3" onClick={handleNext}>
-                                                <SkipForward size={20} fill="currentColor" />
-                                            </ControlButton>
-                                        </div>
-
-                                        {/* Громкость — «Apple-slider» + колесо */}
-                                        <div
-                                            className="col-span-2 flex items-center justify-center gap-3 bg-gradient-to-br from-[#e5e7eb] via-[#d1d5db] to-[#9ca3af] rounded-xl px-4 py-3 shadow-[inset_0_2px_4px_rgаба(255,255,255,0.9),0_6px_12px_rgаба(0,0,0,0.5)] border border-white/70"
-                                            onWheel={handleVolumeWheel}
-                                        >
-                                            <Volume2 size={18} className="text-neutral-700 drop-shadow-sm" />
-                                            <div className="relative w-full h-3 bg-[#d1d5db] rounded-full overflow-hidden shadow-[inset_0_2px_4px_rgаба(0,0,0,0.3),0_1px_0_rgаба(255,255,255,0.9)] border border-white/70">
-                                                <input
-                                                    type="range"
-                                                    min="0"
-                                                    max="100"
-                                                    value={volume}
-                                                    onChange={(e) => setVolume(Number(e.target.value))}
-                                                    className="absolute w-full h-full opacity-0 cursor-pointer z-10"
-                                                />
-                                                <div
-                                                    className="h-full bg-gradient-to-r from-orange-300 via-orange-500 to-orange-600 rounded-full transition-all shadow-[inset_0_1px_2px_rgаба(255,255,255,0.7),0_2px_4px_rgаба(0,0,0,0.5)] relative"
-                                                    style={{ width: `${volume}%` }}
-                                                >
-                                                    <div className="absolute right-0 top-1/2 -translate-y-1/2 h-4 w-4 bg-gradient-to-br from-white via-neutral-200 to-neutral-500 rounded-full shadow-[0_3px_6px_rgаба(0,0,0,0.7),inset_0_1px_0_rgаба(255,255,255,0.9)] border border-neutral-400"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Скрытый аудио-элемент */}
-                            <audio ref={audioRef} className="hidden" />
-                        </div>
-                    </div>
-                </div>
+        async function loadPlaylist() {
+          try {
+            const res = await fetch(soup.basePath + "/playlist.json");
+            if (!res.ok) throw new Error("playlist.json not found for " + soup.id);
+            const data = await res.json();
+            const tracks = data.tracks || [];
+            setSoups((prev) =>
+              prev.map((s) =>
+                s.id === soup.id
+                  ? {
+                      ...s,
+                      tracks,
+                      tracksLoaded: true,
+                      playlistTitle: data.title || s.title,
+                      playlistTagline: data.tagline || s.tagline,
+                    }
+                  : s
+              )
             );
+          } catch (err) {
+            console.error(err);
+            setSoups((prev) =>
+              prev.map((s) =>
+                s.id === soup.id
+                  ? { ...s, tracks: [], tracksLoaded: true, loadError: true }
+                  : s
+              )
+            );
+          }
+        }
+        loadPlaylist();
+      }, [currentSoupId, soups]);
+
+      // change track / soup
+      useEffect(() => {
+        const audio = audioRef.current;
+        if (!audio || !currentSoup || !currentTrack) return;
+        setUnsupportedFormatMsg(null);
+        setAutoplayBlocked(false);
+        setCurrentTime(0);
+        setDuration(0);
+        audio.playbackRate = 1;
+
+        const src = currentSoup.basePath + "/" + currentTrack.file;
+        audio.src = src;
+        audio.load();
+
+        try {
+          const ext = (currentTrack.file || "").split(".").pop().toLowerCase();
+          const mimeMap = {
+            mp3: "audio/mpeg",
+            m4a: "audio/mp4",
+            mp4: "audio/mp4",
+            webm: "audio/webm",
+            ogg: "audio/ogg",
+            wav: "audio/wav",
+            aac: "audio/aac",
+          };
+          const mime = mimeMap[ext] || "";
+          if (mime && audio.canPlayType) {
+            const can = audio.canPlayType(mime);
+            if (!can) {
+              setUnsupportedFormatMsg(
+                `Browser may not support audio type ${mime} (file: ${currentTrack.file}).`
+              );
+            }
+          }
+        } catch (e) {
+          console.warn("Format check failed", e);
         }
 
-        const root = ReactDOM.createRoot(document.getElementById("root"));
-        root.render(<App />);
-    </script>
+        const onError = () => {
+          setUnsupportedFormatMsg(
+            `Failed to load ${currentTrack.file}. Check path and server MIME type.`
+          );
+        };
+        const onLoadedMetadata = () => {
+          setDuration(audio.duration || 0);
+        };
+
+        audio.addEventListener("error", onError);
+        audio.addEventListener("loadedmetadata", onLoadedMetadata);
+        return () => {
+          audio.removeEventListener("error", onError);
+          audio.removeEventListener("loadedmetadata", onLoadedMetadata);
+        };
+      }, [currentSoupId, currentTrackIndex, soups]);
+
+      // volume
+      useEffect(() => {
+        if (audioRef.current) {
+          audioRef.current.volume = uiVolumeToGain(volume);
+        }
+      }, [volume]);
+
+      // timeupdate / ended
+      useEffect(() => {
+        const audio = audioRef.current;
+        if (!audio) return;
+        const soup = soups.find((s) => s.id === currentSoupId);
+
+        const handleTimeUpdate = () => {
+          setCurrentTime(audio.currentTime || 0);
+          if (audio.duration && !duration) setDuration(audio.duration);
+        };
+
+        const handleEnded = () => {
+          setCurrentTime(0);
+          if (!soup || !soup.tracks || soup.tracks.length === 0) return;
+          setCurrentTrackIndex((prev) => {
+            const count = soup.tracks.length;
+            if (!count) return prev;
+            return prev + 1 < count ? prev + 1 : 0;
+          });
+        };
+
+        audio.addEventListener("timeupdate", handleTimeUpdate);
+        audio.addEventListener("ended", handleEnded);
+        return () => {
+          audio.removeEventListener("timeupdate", handleTimeUpdate);
+          audio.removeEventListener("ended", handleEnded);
+        };
+      }, [currentSoupId, soups, duration]);
+
+      // play / pause
+      useEffect(() => {
+        const audio = audioRef.current;
+        if (!audio) return;
+
+        if (isPlaying && currentSoup && currentTrack) {
+          if (
+            audioContextRef.current &&
+            audioContextRef.current.state === "suspended"
+          ) {
+            audioContextRef.current.resume().catch(() => {});
+          }
+          const p = audio.play();
+          if (p && p.catch) {
+            p.catch((err) => {
+              console.log("Playback error:", err);
+              if (
+                err &&
+                (err.name === "NotAllowedError" ||
+                  /play.*not allowed/i.test(err.message || ""))
+              ) {
+                setAutoplayBlocked(true);
+              }
+              setIsPlaying(false);
+            });
+          }
+        } else {
+          audio.pause();
+        }
+      }, [isPlaying, currentSoupId, currentTrackIndex, currentSoup, currentTrack]);
+
+      const handleSoupSelect = (soup) => {
+        setCurrentSoupId(soup.id);
+        setCurrentTrackIndex(0);
+        setCurrentTime(0);
+        setDuration(0);
+        setIsPlaying(true);
+      };
+
+      const togglePlay = () => {
+        if (!currentSoup || !currentTrack) return;
+        setIsPlaying((p) => !p);
+      };
+
+      const handleNext = () => {
+        if (!currentSoup || !currentSoup.tracks || !currentSoup.tracks.length) return;
+        setCurrentTrackIndex((prev) => {
+          const count = currentSoup.tracks.length;
+          if (!count) return prev;
+          return prev + 1 < count ? prev + 1 : 0;
+        });
+      };
+
+      const handlePrev = () => {
+        if (!currentSoup || !currentSoup.tracks || !currentSoup.tracks.length) return;
+        setCurrentTrackIndex((prev) => {
+          const count = currentSoup.tracks.length;
+          if (!count) return prev;
+          return prev - 1 >= 0 ? prev - 1 : count - 1;
+        });
+      };
+
+      // вариспид / скретч-стиль: удержание REW/FWD
+      const startJog = (direction) => {
+        const audio = audioRef.current;
+        if (!audio || !audio.duration) return;
+
+        // отменим прошлое
+        if (jogIntervalRef.current) {
+          clearInterval(jogIntervalRef.current);
+          jogIntervalRef.current = null;
+        }
+
+        setJogAnimation(direction === "forward" ? "forward" : "back");
+
+        if (!isPlaying) setIsPlaying(true);
+
+        if (direction === "forward") {
+          // ускоряем проигрывание, питч становится выше
+          audio.playbackRate = 2.2;
+        } else {
+          // имитация "скретча" назад — быстрые шаги назад по таймлайну
+          audio.playbackRate = 1.2;
+          const step = 0.16; // секунд за тик
+          const interval = setInterval(() => {
+            if (!audio.duration) return;
+            const next = Math.max(0, audio.currentTime - step);
+            audio.currentTime = next;
+          }, 40);
+          jogIntervalRef.current = interval;
+        }
+      };
+
+      const stopJog = () => {
+        const audio = audioRef.current;
+        if (jogIntervalRef.current) {
+          clearInterval(jogIntervalRef.current);
+          jogIntervalRef.current = null;
+        }
+        setJogAnimation(null);
+        if (audio) {
+          audio.playbackRate = 1;
+        }
+      };
+
+      const handleJogStartForward = (e) => {
+        e.preventDefault();
+        startJog("forward");
+      };
+      const handleJogStartBack = (e) => {
+        e.preventDefault();
+        startJog("back");
+      };
+      const handleJogEnd = (e) => {
+        e.preventDefault();
+        stopJog();
+      };
+
+      const handleVolumeWheel = (e) => {
+        e.preventDefault();
+        const step = 5;
+        const direction = e.deltaY > 0 ? -1 : 1;
+        setVolume((prev) => {
+          const next = Math.max(0, Math.min(100, prev + direction * step));
+          return next;
+        });
+      };
+
+      const scroll = (direction) => {
+        if (!scrollContainerRef.current) return;
+        const current = scrollContainerRef.current;
+        const scrollAmount = 18 * 16; // 18rem
+        current.scrollBy({
+          left: direction === "left" ? -scrollAmount : scrollAmount,
+          behavior: "smooth",
+        });
+      };
+
+      const daySoupForToday = soups.find(
+        (s) => s.type === "day" && s.dayOfWeek === effectiveDayIndex
+      );
+
+      const displaySoupTitle =
+        (currentSoup && (currentSoup.playlistTitle || currentSoup.title)) ||
+        "NO SOUP SELECTED";
+      const displaySoupTagline =
+        (currentSoup && (currentSoup.playlistTagline || currentSoup.tagline)) ||
+        (currentSoup ? currentSoup.type : "");
+
+      const trackInfoText =
+        currentSoup && currentTrack
+          ? `Track ${currentTrackIndex + 1}/${currentSoup.tracks.length}`
+          : "No track";
+
+      const trackTitleText =
+        currentTrack && (currentTrack.title || currentTrack.file)
+          ? currentTrack.title || currentTrack.file
+          : "Unknown Track";
+
+      const currentTimeText = formatTime(currentTime);
+      const durationText = formatTime(duration);
+      const tuningPercent = duration ? currentTime / duration : 0.3;
+
+      return (
+        <div className="w-full flex flex-col items-center no-select">
+          {/* Заголовок */}
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-[0.28em] md:tracking-[0.35em] text-neutral-100 mb-2 uppercase text-center flex items-center justify-center gap-3 sm:gap-4 drop-shadow-[0_0.2rem_0.6rem_rgba(0,0,0,0.9)]">
+            <Disc className="text-orange-400/90 drop-shadow-[0_0_0.6rem_rgba(249,115,22,0.8)]" size={28} />
+            Суп дня
+            <Disc className="text-orange-400/90 drop-shadow-[0_0_0.6rem_rgba(249,115,22,0.8)]" size={28} />
+          </h1>
+          <p className="text-[0.6rem] sm:text-[0.7rem] uppercase tracking-[0.22em] text-neutral-400 mb-5 font-mono">
+            Supdnya Portable Soup Player
+          </p>
+
+          {/* Debug / day */}
+          <div className="mb-4 flex flex-col sm:flex-row items-center justify-center gap-2 text-[0.7rem] text-neutral-300 font-mono bg-black/40 px-3 py-2 rounded-full border border-white/10 shadow-[0_0.35rem_1.1rem_rgba(0,0,0,0.9)]">
+            <span className="text-neutral-400">Debug day:</span>
+            <select
+              value={debugDayIndex !== null ? debugDayIndex : todayInfo.dayIndex}
+              onChange={(e) => setDebugDayIndex(Number(e.target.value))}
+              className="bg-neutral-900/80 border border-neutral-600 rounded-full px-2 py-1 text-[0.7rem] outline-none"
+            >
+              {dayNames.map((name, idx) => (
+                <option key={idx} value={idx}>
+                  {idx} — {name}
+                </option>
+              ))}
+            </select>
+            <button
+              type="button"
+              onClick={() => setDebugDayIndex(null)}
+              className="px-2 py-1 border border-neutral-600 rounded-full bg-neutral-800 hover:bg-neutral-700 transition"
+            >
+              Real day
+            </button>
+            <span className="text-neutral-500">
+              Today: {dayNames[effectiveDayIndex]}
+            </span>
+          </div>
+
+          {daySoupForToday && (
+            <p className="text-xs sm:text-sm text-neutral-300 mb-5 text-center font-mono">
+              Soup of the day:&nbsp;
+              <span className="text-orange-300">
+                {daySoupForToday.playlistTitle || daySoupForToday.title}
+              </span>
+            </p>
+          )}
+
+          {loadingSoups && (
+            <p className="text-xs text-neutral-400 mb-3 font-mono">
+              Loading soups from <span className="underline">soups/index.json</span>...
+            </p>
+          )}
+          {soupsError && (
+            <p className="text-xs text-red-400 mb-3 font-mono">{soupsError}</p>
+          )}
+          {unsupportedFormatMsg && (
+            <p className="text-xs text-yellow-300 mb-3 font-mono">
+              {unsupportedFormatMsg}
+            </p>
+          )}
+          {autoplayBlocked && (
+            <div className="text-xs text-amber-300 mb-4 font-mono text-center max-w-xl">
+              Autoplay blocked — press Play. If you opened this page with{" "}
+              <code>file://</code>, use a local HTTP server:
+              <div className="mt-1 font-mono text-[0.65rem]">
+                <code>python -m http.server 8000</code>
+              </div>
+            </div>
+          )}
+
+          {/* Полка с кассетами */}
+          <div className="w-full max-w-5xl mb-10 sm:mb-12 relative group/shelf">
+            <button
+              type="button"
+              onClick={() => scroll("left")}
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-20 p-2 rounded-full bg-black/70 text-neutral-200 hover:text-orange-300 hover:bg-black/85 border border-white/20 shadow-[0_0.5rem_1.1rem_rgba(0,0,0,0.85)] transition-all opacity-0 group-hover/shelf:opacity-100 focus:opacity-100 active:scale-95 hidden md:flex"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <button
+              type="button"
+              onClick={() => scroll("right")}
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-20 p-2 rounded-full bg-black/70 text-neutral-200 hover:text-orange-300 hover:bg-black/85 border border-white/20 shadow-[0_0.5rem_1.1rem_rgba(0,0,0,0.85)] transition-all opacity-0 group-hover/shelf:opacity-100 focus:opacity-100 active:scale-95 hidden md:flex"
+            >
+              <ChevronRight size={20} />
+            </button>
+
+            <div className="wood-shelf rounded-3xl p-5 sm:p-6 shadow-[0_1.8rem_4.2rem_rgba(0,0,0,0.9),inset_0_0.1rem_0.3rem_rgba(255,255,255,0.12)] border border-[#4b2b1b] relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/45 pointer-events-none" />
+              <div
+                ref={scrollContainerRef}
+                className="flex gap-6 sm:gap-8 overflow-x-auto pb-7 pt-2 px-3 sm:px-4 no-scrollbar scroll-smooth snap-x snap-mandatory"
+              >
+                {soups.map((soup) => {
+                  const isDaySoup =
+                    soup.type === "day" && typeof soup.dayOfWeek === "number";
+                  const isTodayDaySoup =
+                    isDaySoup && soup.dayOfWeek === effectiveDayIndex;
+                  return (
+                    <div
+                      key={soup.id}
+                      className="relative group flex-shrink-0 snap-center"
+                    >
+                      <Cassette
+                        soup={soup}
+                        isActive={currentSoupId === soup.id}
+                        isSoupOfTheDay={isTodayDaySoup}
+                        onClick={handleSoupSelect}
+                      />
+                      <div className="absolute -bottom-3 left-[5%] w-[90%] h-4 bg-black/70 blur-md rounded-full pointer-events-none" />
+                    </div>
+                  );
+                })}
+                {soups.length === 0 && !loadingSoups && (
+                  <div className="text-sm text-neutral-300 font-mono">
+                    No soups configured yet. Create{" "}
+                    <code>soups/index.json</code>.
+                  </div>
+                )}
+              </div>
+              <div className="absolute bottom-0 left-0 w-full h-4 bg-gradient-to-b from-[#6b432d] to-[#351f13] border-t border-[#8a583a] shadow-[0_-0.25rem_0.5rem_rgba(0,0,0,0.7)]" />
+            </div>
+          </div>
+
+          {/* Основной блок — «Sony-плеер Supdnya» */}
+          <div
+            className={`
+              w-full max-w-3xl rounded-[2.7rem] p-[0.85rem] chrome-bezel relative overflow-visible z-10 mt-auto
+              ${jogAnimation === "forward" ? "jog-forward" : ""}
+              ${jogAnimation === "back" ? "jog-back" : ""}
+            `}
+          >
+            <div className="relative rounded-[2.1rem] bg-slate-900/95 border border-white/40 shadow-[0_1.4rem_2.8rem_rgba(0,0,0,0.9),inset_0_0.05rem_0.05rem_rgba(255,255,255,0.9),inset_0_-0.05rem_0.05rem_rgba(100,100,110,0.9)]">
+              {/* Верхняя ручка */}
+              <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-40 sm:w-44 h-4 bg-gradient-to-b from-slate-50 via-slate-200 to-slate-500 rounded-b-2xl shadow-[0_0.55rem_1.1rem_rgba(0,0,0,0.9)] border border-white/60 border-t-0">
+                <div className="absolute inset-x-6 bottom-1 h-px bg-black/20" />
+              </div>
+
+              {/* Верхние REW/FWD как у hi-fi, но Supdnya */}
+              <div className="absolute -top-8 right-5 sm:right-10 flex gap-3">
+                <button
+                  type="button"
+                  className="top-key w-11 h-5 rounded-t-lg border border-slate-600/80 border-b-0 text-[0.55rem] font-mono text-slate-800 tracking-[0.18em] flex items-center justify-center"
+                  onMouseDown={handleJogStartBack}
+                  onMouseUp={handleJogEnd}
+                  onMouseLeave={handleJogEnd}
+                  onTouchStart={handleJogStartBack}
+                  onTouchEnd={handleJogEnd}
+                  onTouchCancel={handleJogEnd}
+                >
+                  REW
+                </button>
+                <button
+                  type="button"
+                  className="top-key w-11 h-5 rounded-t-lg border border-slate-600/80 border-b-0 text-[0.55rem] font-mono text-slate-800 tracking-[0.18em] flex items-center justify-center"
+                  onMouseDown={handleJogStartForward}
+                  onMouseUp={handleJogEnd}
+                  onMouseLeave={handleJogEnd}
+                  onTouchStart={handleJogStartForward}
+                  onTouchEnd={handleJogEnd}
+                  onTouchCancel={handleJogEnd}
+                >
+                  FWD
+                </button>
+              </div>
+
+              {/* Винты */}
+              <div className="absolute top-4 left-4 w-4 h-4 rounded-full bg-neutral-400 shadow-[inset_0.07rem_0.07rem_0.12rem_rgba(0,0,0,0.85),0_0.07rem_0.12rem_rgba(255,255,255,0.7)] border border-neutral-700 flex items-center justify-center">
+                <div className="w-2 h-[0.12rem] bg-neutral-700 rotate-45" />
+              </div>
+              <div className="absolute top-4 right-4 w-4 h-4 rounded-full bg-neutral-400 shadow-[inset_0.07rem_0.07rem_0.12rem_rgba(0,0,0,0.85),0_0.07rem_0.12rem_rgba(255,255,255,0.7)] border border-neutral-700 flex items-center justify-center">
+                <div className="w-2 h-[0.12rem] bg-neutral-700 -rotate-45" />
+              </div>
+
+              {/* Надпись бренда Supdnya, как Sony */}
+              <div className="absolute bottom-3 right-6 text-[0.75rem] sm:text-[0.85rem] tracking-[0.18em] font-semibold uppercase text-slate-200/90">
+                Supdnya
+              </div>
+
+              {/* Внутренности плеера */}
+              <div className="brushed-metal-inner rounded-[1.9rem] px-4 sm:px-7 pt-9 pb-7 flex flex-col md:flex-row gap-6 md:gap-7 items-center md:items-stretch">
+                {/* Динамик */}
+                <div className="w-full md:w-[32%] aspect-[4/5] min-h-[10rem] sm:min-h-[11rem] relative flex items-center justify-center">
+                  <SpeakerGrille />
+                  <div className="absolute bottom-4 left-4 bg-black/70 px-3 py-1.5 rounded-full border border-white/15 shadow-[0_0.4rem_0.9rem_rgba(0,0,0,0.85)] flex items-center gap-2">
+                    <RadioIcon size={14} className="text-orange-400" />
+                    <span className="font-mono text-[0.6rem] tracking-[0.18em] uppercase text-neutral-200">
+                      Суп дня
+                    </span>
+                  </div>
+                </div>
+
+                {/* Центральный дисплей + тюнер + контролы */}
+                <div className="flex-1 flex flex-col gap-4 sm:gap-5 w-full">
+                  {/* Впуклый стеклянный дисплей */}
+                  <div className="glass-panel p-[0.18rem]">
+                    <div className="relative rounded-[1.25rem] overflow-hidden bg-black/90">
+                      <div className="glass-highlight absolute inset-0 pointer-events-none mix-blend-screen opacity-70" />
+                      <div className="relative z-10 px-4 sm:px-5 pt-3.5 sm:pt-4 pb-3.5 sm:pb-4 flex flex-col gap-3 sm:gap-3.5">
+                        {/* Статус-строка */}
+                        <div className="flex justify-between items-center text-[0.6rem] font-mono uppercase tracking-[0.18em] text-emerald-200/80">
+                          <span className="flex items-center gap-1.5">
+                            <BatteryMedium size={12} /> 80%
+                          </span>
+                          <span className="flex items-center gap-1.5">
+                            <Activity size={12} />
+                            {currentSoup && currentTrack ? "STREAM" : "---"}
+                          </span>
+                          <span
+                            className={`flex items-center gap-1.5 ${
+                              isPlaying
+                                ? "text-emerald-300 animate-pulse drop-shadow-[0_0_0.45rem_rgba(16,185,129,0.9)]"
+                                : ""
+                            }`}
+                          >
+                            {isPlaying ? "PLAYING" : "PAUSED"}
+                          </span>
+                        </div>
+
+                        {/* Обложка + крупный трек */}
+                        <div className="flex items-center gap-3.5 sm:gap-4">
+                          <div
+                            className={`w-14 h-14 sm:w-16 sm:h-16 rounded-xl flex-shrink-0 flex items-center justify-center ${
+                              currentSoup?.coverColor || "bg-neutral-900"
+                            } shadow-[0_0.45rem_1.1rem_rgba(0,0,0,0.9)] border border-white/25 relative overflow-hidden`}
+                          >
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/35 via-transparent to-black/45 pointer-events-none mix-blend-screen" />
+                            <Music2
+                              size={24}
+                              className="text-white/90 drop-shadow-[0_0_0.5rem_rgba(0,0,0,0.9)]"
+                            />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            {/* НАЗВАНИЕ ТРЕКА — крупно */}
+                            <div className="text-emerald-200 font-mono text-base sm:text-lg md:text-xl tracking-tight leading-snug truncate drop-shadow-[0_0_0.35rem_rgba(16,185,129,0.7)]">
+                              {trackTitleText}
+                            </div>
+                            {/* Инфа по треку сразу под ним */}
+                            <div className="mt-1 text-[0.65rem] sm:text-[0.7rem] text-emerald-400/90 font-mono truncate">
+                              {trackInfoText}
+                            </div>
+                            {/* Время посередине — ещё не про суп */}
+                            <div className="mt-1 text-[0.65rem] text-emerald-500/80 font-mono">
+                              {currentTimeText} / {durationText}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* В самом низу — суп дня и режим */}
+                        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
+                          <div className="text-[0.6rem] font-mono text-emerald-400/80 uppercase flex flex-col gap-[0.12rem]">
+                            <span>
+                              Mode:{" "}
+                              {currentSoup
+                                ? currentSoup.type === "day"
+                                  ? "DAY SOUP RADIO"
+                                  : "CASSETTE"
+                                : "---"}
+                            </span>
+                            <span>
+                              Tracks:{" "}
+                              {currentSoup && currentSoup.tracks
+                                ? currentSoup.tracks.length
+                                : 0}
+                            </span>
+                            <span>
+                              Soup:{" "}
+                              {displaySoupTitle !== "NO SOUP SELECTED"
+                                ? displaySoupTitle
+                                : "---"}
+                            </span>
+                          </div>
+                          <div className="mt-1 sm:mt-0">
+                            <SpectrumVisualizer
+                              analyser={analyserNode}
+                              isPlaying={isPlaying}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Тюнерная шкала */}
+                  <div className="rounded-xl px-4 py-3 bg-gradient-to-b from-slate-800 via-slate-900 to-black shadow-[inset_0_0.05rem_0.15rem_rgba(255,255,255,0.25),inset_0_-0.12rem_0.4rem_rgba(0,0,0,0.9),0_0.4rem_1.1rem_rgba(0,0,0,0.7)] border border-black/70">
+                    <div className="flex justify-between text-[0.6rem] font-mono text-emerald-100/80 uppercase tracking-[0.18em]">
+                      <span>FM</span>
+                      <span>Soup Dial</span>
+                      <span>STEREO</span>
+                    </div>
+                    <div className="relative mt-2">
+                      <div className="h-8 flex items-center">
+                        <div className="w-full h-px bg-gradient-to-r from-emerald-900 via-emerald-500/85 to-emerald-900 opacity-85" />
+                      </div>
+                      <div className="absolute inset-x-0 top-[0.15rem] flex justify-between text-[0.55rem] font-mono text-emerald-200/85">
+                        {["88", "92", "96", "100", "104", "108"].map((v) => (
+                          <span key={v}>{v}</span>
+                        ))}
+                      </div>
+                      <div
+                        className="absolute left-0 top-[0.4rem] h-7 flex items-center transition-all duration-150"
+                        style={{
+                          transform: `translateX(${tuningPercent * 100}%) translateX(-50%)`,
+                        }}
+                      >
+                        <div className="w-[0.12rem] h-full bg-gradient-to-b from-rose-100 via-rose-400 to-rose-900 shadow-[0_0_0.5rem_rgba(248,113,113,0.95)]" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Панель управления */}
+                  <div className="grid grid-cols-5 gap-4 sm:gap-5 bg-gradient-to-br from-slate-100 via-slate-200 to-slate-400 p-3.5 sm:p-4 rounded-2xl shadow-[inset_0_0.12rem_0.2rem_rgba(255,255,255,0.9),0_0.8rem_1.9rem_rgba(0,0,0,0.8)] border border-white/80">
+                    <div className="col-span-3 flex items-center justify-evenly">
+                      <ControlButton className="p-3" onClick={handlePrev}>
+                        <SkipBack size={20} fill="currentColor" />
+                      </ControlButton>
+                      <ControlButton
+                        onClick={togglePlay}
+                        isActive={isPlaying}
+                        className={`w-14 h-14 sm:w-16 sm:h-16 ${
+                          isPlaying
+                            ? "!from-orange-200 !to-orange-500 !border-orange-500"
+                            : ""
+                        }`}
+                      >
+                        {isPlaying ? (
+                          <Pause
+                            size={26}
+                            fill="currentColor"
+                            className="drop-shadow-sm"
+                          />
+                        ) : (
+                          <Play
+                            size={26}
+                            fill="currentColor"
+                            className="ml-1 drop-shadow-sm"
+                          />
+                        )}
+                      </ControlButton>
+                      <ControlButton className="p-3" onClick={handleNext}>
+                        <SkipForward size={20} fill="currentColor" />
+                      </ControlButton>
+                    </div>
+
+                    {/* Громкость с колёсиком */}
+                    <div
+                      className="col-span-2 flex items-center justify-center gap-2.5 sm:gap-3 bg-gradient-to-br from-slate-200 via-slate-300 to-slate-400 rounded-xl px-3 sm:px-4 py-2.5 shadow-[inset_0_0.12rem_0.25rem_rgba(255,255,255,0.9),0_0.4rem_0.9rem_rgba(0,0,0,0.6)] border border-white/70"
+                      onWheel={handleVolumeWheel}
+                    >
+                      <Volume2 size={18} className="text-slate-800 drop-shadow-sm" />
+                      <div className="relative w-full h-3 bg-slate-300 rounded-full overflow-hidden shadow-[inset_0_0.12rem_0.25rem_rgba(0,0,0,0.35),0_0.06rem_0_rgba(255,255,255,0.9)] border border-white/80">
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={volume}
+                          onChange={(e) => setVolume(Number(e.target.value))}
+                          className="absolute w-full h-full opacity-0 cursor-pointer z-10"
+                        />
+                        <div
+                          className="h-full bg-gradient-to-r from-orange-300 via-orange-500 to-orange-600 rounded-full transition-all shadow-[inset_0_0.06rem_0.12rem_rgba(255,255,255,0.7),0_0.12rem_0.25rem_rgba(0,0,0,0.55)] relative"
+                          style={{ width: `${volume}%` }}
+                        >
+                          <div className="absolute right-0 top-1/2 -translate-y-1/2 h-4 w-4 bg-gradient-to-br from-white via-slate-200 to-slate-500 rounded-full shadow-[0_0.18rem_0.35rem_rgba(0,0,0,0.7),inset_0_0.06rem_0_rgba(255,255,255,0.9)] border border-slate-400" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Скрытый audio */}
+              <audio ref={audioRef} className="hidden" />
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
 </body>
 </html>
