@@ -443,7 +443,7 @@
                 if (soupOfTheDay) {
                     setCurrentSoupId(soupOfTheDay.id);
                     setCurrentTrackIndex(0);
-                    setIsPlaying(false); // отключён автозапуск — требуется действие пользователя для play()
+                    setIsPlaying(true); // автозапуск радио
                 }
             }, [soups, currentSoupId, effectiveDayIndex]);
 
@@ -502,51 +502,39 @@
                 }
             }, [volume]);
 
-// Timeupdate + ended + error
-useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
+            // Timeupdate + ended
+            useEffect(() => {
+                const audio = audioRef.current;
+                if (!audio) return;
 
-    const soup = soups.find((s) => s.id === currentSoupId);
+                const soup = soups.find((s) => s.id === currentSoupId);
 
-    const handleTimeUpdate = () => {
-        if (!audio.duration) {
-            setProgress(0);
-            return;
-        }
-        setProgress((audio.currentTime / audio.duration) * 100);
-    };
+                const handleTimeUpdate = () => {
+                    if (!audio.duration) {
+                        setProgress(0);
+                        return;
+                    }
+                    setProgress((audio.currentTime / audio.duration) * 100);
+                };
 
-    const goToNextTrack = () => {
-        setProgress(0);
-        if (!soup || !soup.tracks || soup.tracks.length === 0) return;
-        setCurrentTrackIndex((prev) => {
-            const trackCount = soup.tracks.length;
-            if (trackCount === 0) return prev;
-            return prev + 1 < trackCount ? prev + 1 : 0; // loop по супу
-        });
-    };
+                const handleEnded = () => {
+                    setProgress(0);
+                    if (!soup || !soup.tracks || soup.tracks.length === 0) return;
+                    setCurrentTrackIndex((prev) => {
+                        const trackCount = soup.tracks.length;
+                        if (trackCount === 0) return prev;
+                        return prev + 1 < trackCount ? prev + 1 : 0; // loop по супу
+                    });
+                };
 
-    const handleEnded = () => {
-        goToNextTrack();
-    };
+                audio.addEventListener("timeupdate", handleTimeUpdate);
+                audio.addEventListener("ended", handleEnded);
 
-    const handleError = (e) => {
-        console.warn("Audio error on", audio.currentSrc || audio.src, e?.message || e);
-        goToNextTrack();
-    };
-
-    audio.addEventListener("timeupdate", handleTimeUpdate);
-    audio.addEventListener("ended", handleEnded);
-    audio.addEventListener("error", handleError);
-
-    return () => {
-        audio.removeEventListener("timeupdate", handleTimeUpdate);
-        audio.removeEventListener("ended", handleEnded);
-        audio.removeEventListener("error", handleError);
-    };
-}, [currentSoupId, soups]);
-
+                return () => {
+                    audio.removeEventListener("timeupdate", handleTimeUpdate);
+                    audio.removeEventListener("ended", handleEnded);
+                };
+            }, [currentSoupId, soups]);
 
             // Play / pause
             useEffect(() => {
